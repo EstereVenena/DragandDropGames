@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -34,7 +34,11 @@ public class DragAndDropScript : MonoBehaviour, IPointerDownHandler, IBeginDragH
             objectScr.lastDragged = null;
             canvasGro.blocksRaycasts = false;
             canvasGro.alpha = 0.6f;
-            rectTra.SetAsLastSibling();
+            //pēdējais hierarhijā            
+            //rectTra.SetAsLastSibling();
+            //pirmspēdējais hierarhijā
+            int positionIndex = transform.parent.childCount - 1;
+            transform.SetSiblingIndex(positionIndex);
             Vector3 cursorWorldPos = Camera.main.ScreenToWorldPoint(
                 new Vector3(Input.mousePosition.x, Input.mousePosition.y, screenBou.screenPoint.z));
             rectTra.position = cursorWorldPos;
@@ -45,6 +49,7 @@ public class DragAndDropScript : MonoBehaviour, IPointerDownHandler, IBeginDragH
                 Camera.main.ScreenToWorldPoint(
                     new Vector3(Input.mousePosition.x, Input.mousePosition.y,
                 screenBou.screenPoint.z));
+            objectScr.lastDragged = eventData.pointerDrag;
         }
     }
 
@@ -63,7 +68,6 @@ public class DragAndDropScript : MonoBehaviour, IPointerDownHandler, IBeginDragH
     {
         if (Input.GetMouseButtonUp(0))
             {
-            objectScr.lastDragged = eventData.pointerDrag;
             canvasGro.blocksRaycasts = true;
             canvasGro.alpha = 1.0f;
 
