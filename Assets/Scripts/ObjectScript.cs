@@ -13,8 +13,8 @@ public class ObjectScript : MonoBehaviour
     public AudioClip[] audioCli;
     [HideInInspector]
     public bool rightPlace = false;
-    public GameObject lastDragged = null;
-    public bool drag = false;
+    public static GameObject lastDragged = null;
+    public static bool drag = false;
 
 
     void Awake()

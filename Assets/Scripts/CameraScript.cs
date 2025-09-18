@@ -1,20 +1,22 @@
+
 using UnityEngine;
-using static UnityEngine.RuleTile.TilingRuleOutput;
 
 public class CameraScript : MonoBehaviour
 {
     public float maxZoom = 300f,
-                minZoom = 150f,
-                panSpeed = 6f;
-
+        minZoom = 150f,
+        panSpeed = 6f;
     Vector3 bottomLeft, topRight;
-    float cameraMaxX, cameraMaxY, cameraMinX, cameraMinY, x, y;
+    float cameraMaxX, cameraMinX, cameraMaxY, cameraMinY, x, y;
     public Camera cam;
 
+
+    // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         cam = GetComponent<Camera>();
-        topRight = cam.ScreenToWorldPoint(new Vector3(cam.pixelWidth, cam.pixelHeight, -transform.position.z));
+        topRight =
+            cam.ScreenToWorldPoint(new Vector3(cam.pixelWidth, cam.pixelHeight, -transform.position.z));
         bottomLeft = cam.ScreenToWorldPoint(new Vector3(0, 0, -transform.position.z));
         cameraMaxX = topRight.x;
         cameraMaxY = topRight.y;
@@ -22,20 +24,21 @@ public class CameraScript : MonoBehaviour
         cameraMinY = bottomLeft.y;
     }
 
+    // Update is called once per frame
     void Update()
     {
-        x = Input.GetAxis("Mouse x") * panSpeed;
+        x = Input.GetAxis("Mouse X") * panSpeed;
         y = Input.GetAxis("Mouse Y") * panSpeed;
         transform.Translate(x, y, 0);
 
         if ((Input.GetAxis("Mouse ScrollWheel") > 0) && cam.orthographicSize > minZoom)
         {
-            cam.orthographicSize = cam.orthographicSize - 50;
+            cam.orthographicSize = cam.orthographicSize - 50f;
         }
 
         if ((Input.GetAxis("Mouse ScrollWheel") < 0) && cam.orthographicSize < maxZoom)
         {
-            cam.orthographicSize = cam.orthographicSize + 50;
+            cam.orthographicSize = cam.orthographicSize + 50f;
         }
 
         topRight = cam.ScreenToWorldPoint(new Vector3(cam.pixelWidth, cam.pixelHeight, -transform.position.z));
@@ -53,13 +56,13 @@ public class CameraScript : MonoBehaviour
                 transform.position.x, transform.position.y - (topRight.y - cameraMaxY), transform.position.z);
         }
 
-        if (bottomLeft.x > cameraMinX)
+        if (bottomLeft.x < cameraMinX)
         {
             transform.position = new Vector3(
                 transform.position.x + (cameraMinX - bottomLeft.x), transform.position.y, transform.position.z);
         }
 
-        if (bottomLeft.y > cameraMinY)
+        if (bottomLeft.y < cameraMinY)
         {
             transform.position = new Vector3(
                 transform.position.x, transform.position.y + (cameraMinY - bottomLeft.y), transform.position.z);
