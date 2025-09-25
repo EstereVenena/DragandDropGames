@@ -1,4 +1,3 @@
-
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -20,6 +19,8 @@ public class ObjectScript : MonoBehaviour
     void Awake()
     {
         startCoordinates = new Vector2[vehicles.Length];
+        Debug.Log(vehicles.Length);
+        Debug.Log(startCoordinates.Length);
         for (int i = 0; i < vehicles.Length; i++)
         {
             startCoordinates[i] = vehicles[i].GetComponent<RectTransform>().localPosition;

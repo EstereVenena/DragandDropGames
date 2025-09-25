@@ -2,9 +2,6 @@ using UnityEngine;
 
 public class TransformationScript : MonoBehaviour
 {
-    public ObjectScript objScript;
-
-
     void Update()
     {
         if (ObjectScript.lastDragged != null)
@@ -38,10 +35,10 @@ public class TransformationScript : MonoBehaviour
                 if (ObjectScript.lastDragged.GetComponent<RectTransform>().transform.localScale.y > 0.3f)
                 {
                     ObjectScript.lastDragged.GetComponent<RectTransform>().transform.localScale =
-                        new Vector3(
-                        ObjectScript.lastDragged.GetComponent<RectTransform>().transform.localScale.x,
-                        ObjectScript.lastDragged.GetComponent<RectTransform>().transform.localScale.y - 0.005f,
-                        1f);
+                    new Vector3(
+                    ObjectScript.lastDragged.GetComponent<RectTransform>().transform.localScale.x,
+                    ObjectScript.lastDragged.GetComponent<RectTransform>().transform.localScale.y - 0.005f,
+                    1f);
                 }
 
             }

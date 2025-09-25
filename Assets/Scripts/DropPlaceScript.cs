@@ -1,7 +1,7 @@
-using JetBrains.Annotations;
+//using JetBrains.Annotations;
 using UnityEngine;
 using UnityEngine.EventSystems;
-using UnityEngine.InputSystem.Switch;
+//using UnityEngine.InputSystem.Switch;
 
 public class DropPlaceScript : MonoBehaviour
 {
@@ -32,8 +32,9 @@ public class DropPlaceScript : MonoBehaviour
                 Debug.Log("X size Difference: " + xsizeDiff);
                 Debug.Log("y size Difference: " + ySizeDiff);
 
-                if ((rotDiff <= 5 || (rotDiff >=355 && rotDiff <= 360)) &&
-                    (xsizeDiff <= 0.05 && ySizeDiff <= 0.05)){
+                if ((rotDiff <= 5 || (rotDiff >= 355 && rotDiff <= 360)) &&
+                    (xsizeDiff <= 0.05 && ySizeDiff <= 0.05))
+                {
 
                     Debug.Log("Corect place");
                     objScript.rightPlace = true;
@@ -101,7 +102,7 @@ public class DropPlaceScript : MonoBehaviour
             {
                 objScript.rightPlace = false;
                 objScript.effects.PlayOneShot(objScript.audioCli[1]);
-                switch(eventData.pointerDrag.tag)
+                switch (eventData.pointerDrag.tag)
                 {
                     case "Garbage":
                         objScript.vehicles[0].GetComponent<RectTransform>().localPosition = objScript.startCoordinates[0];

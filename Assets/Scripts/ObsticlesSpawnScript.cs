@@ -50,7 +50,7 @@ public class ObsticlesSpawnScript : MonoBehaviour
             GameObject ObsticlesPrefab = obstaclesPrefabs[Random.Range(0, obstaclesPrefabs.Length)];
             float y = Random.Range(minY, maxY);
             Vector3 spawnPosition = new Vector3 (-spawnPoint.position.x, y, spawnPoint.position.z);
-            GameObject obstacle = Instantiate(obstaclesPrefab, spawnPosition, Quaternion.identity, spawnPoint);
+            GameObject obstacle = Instantiate(obstaclesPrefabs, spawnPosition, Quaternion.identity, spawnPoint);
             float movmentSpeed = Random.Range(obstaclesMinSpeed, obstaclesMaxSpeed);
             ObstaclesControlerScript controler = obstacle.GetComponent<ObstaclesControlerScript>();
             controler.speed = -movmentSpeed;

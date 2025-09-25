@@ -1,4 +1,3 @@
-
 using UnityEngine;
 
 public class CameraScript : MonoBehaviour
@@ -10,17 +9,15 @@ public class CameraScript : MonoBehaviour
     float cameraMaxX, cameraMinX, cameraMaxY, cameraMinY, x, y;
     public Camera cam;
 
-
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         cam = GetComponent<Camera>();
-        topRight =
-            cam.ScreenToWorldPoint(new Vector3(cam.pixelWidth, cam.pixelHeight, -transform.position.z));
+        topRight = cam.ScreenToWorldPoint(
+            new Vector3(cam.pixelWidth, cam.pixelHeight, -transform.position.z));
         bottomLeft = cam.ScreenToWorldPoint(new Vector3(0, 0, -transform.position.z));
         cameraMaxX = topRight.x;
-        cameraMaxY = topRight.y;
         cameraMinX = bottomLeft.x;
+        cameraMaxY = topRight.y;
         cameraMinY = bottomLeft.y;
     }
 
@@ -41,31 +38,32 @@ public class CameraScript : MonoBehaviour
             cam.orthographicSize = cam.orthographicSize + 50f;
         }
 
-        topRight = cam.ScreenToWorldPoint(new Vector3(cam.pixelWidth, cam.pixelHeight, -transform.position.z));
+        topRight = cam.ScreenToWorldPoint(
+            new Vector3(cam.pixelWidth, cam.pixelHeight, -transform.position.z));
         bottomLeft = cam.ScreenToWorldPoint(new Vector3(0, 0, -transform.position.z));
 
         if (topRight.x > cameraMaxX)
         {
             transform.position = new Vector3(
-                transform.position.x - (topRight.x - cameraMaxX), transform.position.y, transform.position.z);
+             transform.position.x - (topRight.x - cameraMaxX), transform.position.y, transform.position.z);
         }
 
         if (topRight.y > cameraMaxY)
         {
             transform.position = new Vector3(
-                transform.position.x, transform.position.y - (topRight.y - cameraMaxY), transform.position.z);
+             transform.position.x, transform.position.y - (topRight.y - cameraMaxY), transform.position.z);
         }
 
         if (bottomLeft.x < cameraMinX)
         {
             transform.position = new Vector3(
-                transform.position.x + (cameraMinX - bottomLeft.x), transform.position.y, transform.position.z);
+             transform.position.x + (cameraMinX - bottomLeft.x), transform.position.y, transform.position.z);
         }
 
         if (bottomLeft.y < cameraMinY)
         {
             transform.position = new Vector3(
-                transform.position.x, transform.position.y + (cameraMinY - bottomLeft.y), transform.position.z);
+             transform.position.x, transform.position.y + (cameraMinY - bottomLeft.y), transform.position.z);
         }
     }
 }

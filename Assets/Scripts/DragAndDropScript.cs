@@ -32,17 +32,16 @@ public class DragAndDropScript : MonoBehaviour, IPointerDownHandler, IBeginDragH
         if (Input.GetMouseButton(0) && !Input.GetMouseButton(1) && !Input.GetMouseButton(2))
         {
             ObjectScript.drag = true;
-            ObjectScript.lastDragged = null;
+            ObjectScript.lastDragged = eventData.pointerDrag;
             canvasGro.blocksRaycasts = false;
             canvasGro.alpha = 0.6f;
-            //pēdējais hierarhijā            
             //rectTra.SetAsLastSibling();
-            //pirmspēdējais hierarhijā
-            int positionIndex = transform.parent.childCount - 1;
-            int position = Mathf.Max(0, positionIndex - 1);
-            transform.SetSiblingIndex(positionIndex);
+            int lastIndex = transform.parent.childCount - 1;
+            int position = Mathf.Max(0, lastIndex - 1);
+            transform.SetSiblingIndex(position);
+
             Vector3 cursorWorldPos = Camera.main.ScreenToWorldPoint(
-                new Vector3(Input.mousePosition.x, Input.mousePosition.y, screenBou.screenPoint.z));
+               new Vector3(Input.mousePosition.x, Input.mousePosition.y, screenBou.screenPoint.z));
             rectTra.position = cursorWorldPos;
 
             screenBou.screenPoint = Camera.main.WorldToScreenPoint(rectTra.localPosition);
@@ -51,7 +50,6 @@ public class DragAndDropScript : MonoBehaviour, IPointerDownHandler, IBeginDragH
                 Camera.main.ScreenToWorldPoint(
                     new Vector3(Input.mousePosition.x, Input.mousePosition.y,
                 screenBou.screenPoint.z));
-            ObjectScript.lastDragged = eventData.pointerDrag;
         }
     }
 
@@ -69,18 +67,18 @@ public class DragAndDropScript : MonoBehaviour, IPointerDownHandler, IBeginDragH
     public void OnEndDrag(PointerEventData eventData)
     {
         if (Input.GetMouseButtonUp(0))
-            {
+        {
             ObjectScript.drag = false;
             canvasGro.blocksRaycasts = true;
             canvasGro.alpha = 1.0f;
 
-            if(objectScr.rightPlace)
+            if (objectScr.rightPlace)
             {
                 canvasGro.blocksRaycasts = false;
                 ObjectScript.lastDragged = null;
             }
 
             objectScr.rightPlace = false;
-            }
         }
+    }
 }
