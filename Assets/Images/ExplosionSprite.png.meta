@@ -146,7 +146,7 @@ TextureImporter:
         width: 781
         height: 715
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -164,11 +164,11 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 1081
-        y: 1122
-        width: 906
-        height: 926
+        y: 1024
+        width: 895
+        height: 999
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -182,28 +182,6 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: ExplosionSprite_2
-      rect:
-        serializedVersion: 2
-        x: 1617
-        y: 1029
-        width: 152
-        height: 112
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 46a08f4462ffd0440800000000000000
-      internalID: 4903856109107284580
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
       name: ExplosionSprite_3
       rect:
         serializedVersion: 2
@@ -212,7 +190,7 @@ TextureImporter:
         width: 791
         height: 691
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -234,7 +212,7 @@ TextureImporter:
         width: 384
         height: 331
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -251,7 +229,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: f834641ac85810a4f9781ecc99f0b2ac
     internalID: 0
     vertices: []
     indices: 
@@ -260,7 +238,11 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      ExplosionSprite_0: 8043076737326112640
+      ExplosionSprite_1: 3251880062016884906
+      ExplosionSprite_3: -83736079354487072
+      ExplosionSprite_4: -2932849115442837780
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

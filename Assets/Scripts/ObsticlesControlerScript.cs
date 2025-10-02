@@ -1,5 +1,6 @@
 ﻿
 using System.Collections;
+using Unity.Hierarchy;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -15,6 +16,7 @@ public class ObstaclesControlerScript : MonoBehaviour
     private CanvasGroup canvasGroup;
     private RectTransform rectTransform;
     private bool isFadingOut = false;
+    private bool bombIsExploding = false;
     private Image image;
     private Color originalColor;
 
@@ -56,6 +58,9 @@ public class ObstaclesControlerScript : MonoBehaviour
             isFadingOut = true;
             StartCoroutine(FadeOutAndDestroy());
         }
+        //Ja neko nevel un kursors pieskaras bumbai
+        if(CompareTag("Bomb") && !bombIsExploding &&)//...................................................
+                                                     //...........................
 
         if (ObjectScript.drag && !isFadingOut && RectTransformUtility.RectangleContainsScreenPoint(rectTransform, Input.mousePosition, Camera.main))
         {
@@ -80,6 +85,12 @@ public class ObstaclesControlerScript : MonoBehaviour
                 objectScript.effects.PlayOneShot(objectScript.audioCli[14]);
             }
         }
+    }
+
+    IEnumerator WaitBeforeExplode()
+    {
+        float radius = 0;
+        if()
     }
 
     IEnumerator FadeIn()
@@ -130,9 +141,9 @@ public class ObstaclesControlerScript : MonoBehaviour
         Destroy(target);
     }
 
-    IEnumerator RecoverColor()
+    IEnumerator RecoverColor(float seconds)
     {
-        yield return new WaitForSeconds(0.5f);
+        yield return new WaitForSeconds(seconds);
         image.color = originalColor;
     }
 
@@ -151,4 +162,17 @@ public class ObstaclesControlerScript : MonoBehaviour
         }
 
     }
+}
+
+public void TrigerrExpolsion()
+{
+    bombIsExploding = true;
+
+}
+
+
+void ExploadAndDestroyNearbyObjects(float radius)
+{
+    if obj !null &&!object.isExploding
+
 }

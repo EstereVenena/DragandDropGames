@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 1451674679349382577}
   - component: {fileID: 5776997604873375542}
   - component: {fileID: 417607749446586372}
+  - component: {fileID: 4750795794770330912}
   m_Layer: 5
   m_Name: Airoplane0
   m_TagString: Untagged
@@ -36,8 +37,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -1235, y: -169.5}
-  m_SizeDelta: {x: 170, y: 185}
+  m_AnchoredPosition: {x: -1240.3048, y: -154.4143}
+  m_SizeDelta: {x: 168.3174, y: 190.0477}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &5403297660640204176
 CanvasRenderer:
@@ -105,3 +106,39 @@ MonoBehaviour:
   waveAmplitude: 25
   waveFrequency: 1
   fadeDuration: 1.5
+--- !u!58 &4750795794770330912
+CircleCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5209367743746624181}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_CompositeOperation: 0
+  m_CompositeOrder: 0
+  m_Offset: {x: 0, y: 11.5}
+  m_Radius: 80
