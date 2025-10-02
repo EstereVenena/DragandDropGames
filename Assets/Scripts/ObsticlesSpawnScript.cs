@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class ObsticlesSpawnScript : MonoBehaviour
+public class ObstaclesSpawnScript : MonoBehaviour
 {
     public GameObject[] cloudsPrefabs;
     public GameObject[] obstaclesPrefabs;
@@ -17,48 +17,45 @@ public class ObsticlesSpawnScript : MonoBehaviour
     public float obstaclesMinSpeed = 2f;
     public float obstaclesMaxSpeed = 200f;
 
-
-
     void Start()
     {
         InvokeRepeating(nameof(SpawnCloud), 0f, cloudSpawnInterval);
-        InvokeRepeating(nameof(SpawnObsticles), 0f, obstacleSpawnInterval);
+        InvokeRepeating(nameof(SpawnObstacles), 0f, obstacleSpawnInterval);
     }
 
     void SpawnCloud()
     {
         if (cloudsPrefabs.Length == 0)
-        {
             return;
 
-            GameObject cloudPrefab = cloudsPrefabs[Random.Range(0, cloudsPrefabs.Length)];
-            float y = Random.Range(minY, maxY);
-            Vector3 spawnPosition = new Vector3 (spawnPoint.position.x, y, spawnPoint.position.z);
-            GameObject cloud = Instantiate(cloudPrefab, spawnPosition, Quaternion.identity, spawnPoint);
-            float movmentSpeed = Random.Range(cloudMinSpeed, cloudMaxSpeed);
-            ObstaclesControlerScript controler = cloud.GetComponent<ObstaclesControlerScript>();
-            controler.speed = movmentSpeed;
+        GameObject cloudPrefab = cloudsPrefabs[Random.Range(0, cloudsPrefabs.Length)];
+        float y = Random.Range(minY, maxY);
+        Vector3 spawnPosition = new Vector3(spawnPoint.position.x, y, spawnPoint.position.z);
+        GameObject cloud = Instantiate(cloudPrefab, spawnPosition, Quaternion.identity, spawnPoint);
+        float movementSpeed = Random.Range(cloudMinSpeed, cloudMaxSpeed);
+
+        ObstaclesControlerScript controller = cloud.GetComponent<ObstaclesControlerScript>();
+        if (controller != null)
+        {
+            controller.speed = movementSpeed;
         }
     }
 
-    void SpawnObsticles()
+    void SpawnObstacles()
     {
-        if (cloudsPrefabs.Length == 0)
-        {
+        if (obstaclesPrefabs.Length == 0)
             return;
 
-            GameObject ObsticlesPrefab = obstaclesPrefabs[Random.Range(0, obstaclesPrefabs.Length)];
-            float y = Random.Range(minY, maxY);
-            Vector3 spawnPosition = new Vector3 (-spawnPoint.position.x, y, spawnPoint.position.z);
-            GameObject obstacle = Instantiate(obstaclesPrefabs, spawnPosition, Quaternion.identity, spawnPoint);
-            float movmentSpeed = Random.Range(obstaclesMinSpeed, obstaclesMaxSpeed);
-            ObstaclesControlerScript controler = obstacle.GetComponent<ObstaclesControlerScript>();
-            controler.speed = -movmentSpeed;
+        GameObject obstaclePrefab = obstaclesPrefabs[Random.Range(0, obstaclesPrefabs.Length)];
+        float y = Random.Range(minY, maxY);
+        Vector3 spawnPosition = new Vector3(-spawnPoint.position.x, y, spawnPoint.position.z);
+        GameObject obstacle = Instantiate(obstaclePrefab, spawnPosition, Quaternion.identity, spawnPoint);
+        float movementSpeed = Random.Range(obstaclesMinSpeed, obstaclesMaxSpeed);
+
+        ObstaclesControlerScript controller = obstacle.GetComponent<ObstaclesControlerScript>();
+        if (controller != null)
+        {
+            controller.speed = -movementSpeed;
         }
-    }
-    // Update is called once per frame
-    void Update()
-    {
-        
     }
 }
