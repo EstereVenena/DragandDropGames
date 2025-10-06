@@ -51,7 +51,7 @@ public class FlyingObjectSpawnScript : MonoBehaviour
         GameObject objectPrefab = objectPrefabs[Random.Range(0, objectPrefabs.Length)];
         float y = Random.Range(minY, maxY);
 
-        Vector3 spawnPosition = new Vector3(-spawnPoint.position.x, y, spawnPoint.position.z);
+        Vector3 spawnPosition = new(-spawnPoint.position.x, y, spawnPoint.position.z);
 
         GameObject flyingObject =
             Instantiate(objectPrefab, spawnPosition, Quaternion.identity, spawnPoint);
