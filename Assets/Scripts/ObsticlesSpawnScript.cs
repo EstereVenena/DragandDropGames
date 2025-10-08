@@ -34,7 +34,7 @@ public class ObstaclesSpawnScript : MonoBehaviour
         GameObject cloud = Instantiate(cloudPrefab, spawnPosition, Quaternion.identity, spawnPoint);
         float movementSpeed = Random.Range(cloudMinSpeed, cloudMaxSpeed);
 
-        ObstaclesControlerScript controller = cloud.GetComponent<ObstaclesControlerScript>();
+        ObstaclesControllerScript controller = cloud.GetComponent<ObstaclesControllerScript>();
         if (controller != null)
         {
             controller.speed = movementSpeed;
@@ -52,7 +52,7 @@ public class ObstaclesSpawnScript : MonoBehaviour
         GameObject obstacle = Instantiate(obstaclePrefab, spawnPosition, Quaternion.identity, spawnPoint);
         float movementSpeed = Random.Range(obstaclesMinSpeed, obstaclesMaxSpeed);
 
-        ObstaclesControlerScript controller = obstacle.GetComponent<ObstaclesControlerScript>();
+        ObstaclesControllerScript controller = obstacle.GetComponent<ObstaclesControllerScript>();
         if (controller != null)
         {
             controller.speed = -movementSpeed;

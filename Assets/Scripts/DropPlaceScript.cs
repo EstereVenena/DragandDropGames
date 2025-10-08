@@ -12,7 +12,7 @@ public class DropPlaceScript : MonoBehaviour
 
     public void OnDrop(PointerEventData eventData)
     {
-        if ((eventData.pointerDrag != null) && Input.GetMouseButtonUp(0) && !Input.GetMouseButton(1) && !Input.GetMouseButton(2)) ;
+        if ((eventData.pointerDrag != null) && Input.GetMouseButtonUp(0) && !Input.GetMouseButton(1) && !Input.GetMouseButton(2))
         {
             if (eventData.pointerDrag.tag.Equals(tag))
             {

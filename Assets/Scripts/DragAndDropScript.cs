@@ -9,7 +9,7 @@ public class DragAndDropScript : MonoBehaviour, IPointerDownHandler, IBeginDragH
     private CanvasGroup canvasGro;
     private RectTransform rectTra;
     public ObjectScript objectScr;
-    public ScreenBoundriesScript screenBou;
+    public ScreenBoundariesScript screenBou;
 
     // Start is called before the first frame update
     void Start()

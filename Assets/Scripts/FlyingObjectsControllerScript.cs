@@ -10,11 +10,11 @@ public class FlyingObjectsControllerScript : MonoBehaviour
     public float waveAmplitude = 25f;
     public float waveFrequency = 1f;
     private ObjectScript objectScript;
-    private ScreenBoundriesScript scrreenBoundriesScript;
+    private ScreenBoundariesScript screenBoundariesScript;
     private CanvasGroup canvasGroup;
     private RectTransform rectTransform;
     private bool isFadingOut = false;
-    private bool isExploading = false;
+    public bool isExploding = false;
     private Image image;
     private Color originalColor;
 
@@ -31,7 +31,7 @@ public class FlyingObjectsControllerScript : MonoBehaviour
         image = GetComponent<Image>();
         originalColor = image.color;
         objectScript = FindFirstObjectByType<ObjectScript>();
-        scrreenBoundriesScript = FindFirstObjectByType<ScreenBoundriesScript>();
+        screenBoundariesScript = FindFirstObjectByType<ScreenBoundariesScript>();
         StartCoroutine(FadeIn());
     }
 
@@ -41,20 +41,20 @@ public class FlyingObjectsControllerScript : MonoBehaviour
         float waveOffset = Mathf.Sin(Time.time * waveFrequency) * waveAmplitude;
         rectTransform.anchoredPosition += new Vector2(-speed * Time.deltaTime, waveOffset * Time.deltaTime);
         // <-
-        if (speed > 0 && transform.position.x < (scrreenBoundriesScript.minX + 80) && !isFadingOut)
+        if (speed > 0 && transform.position.x < (screenBoundariesScript.minX + 80) && !isFadingOut)
         {
             StartCoroutine(FadeOutAndDestroy());
             isFadingOut = true;
         }
 
         // ->
-        if (speed < 0 && transform.position.x > (scrreenBoundriesScript.maxX - 80) && !isFadingOut)
+        if (speed < 0 && transform.position.x > (screenBoundariesScript.maxX - 80) && !isFadingOut)
         {
             StartCoroutine(FadeOutAndDestroy());
             isFadingOut = true;
         }
 
-        if (CompareTag("Bomb") && !isExploading &&
+        if (CompareTag("Bomb") && !isExploding &&
             RectTransformUtility.RectangleContainsScreenPoint(
                 rectTransform, Input.mousePosition, Camera.main))
         {
@@ -84,7 +84,7 @@ public class FlyingObjectsControllerScript : MonoBehaviour
 
     public void TriggerExplosion()
     {
-        isExploading = true;
+        isExploding = true;
         objectScript.effects.PlayOneShot(objectScript.audioCli[6], 5f);
 
         if (TryGetComponent<Animator>(out Animator animator))
@@ -123,7 +123,7 @@ public class FlyingObjectsControllerScript : MonoBehaviour
                 FlyingObjectsControllerScript obj =
                     hitCollider.gameObject.GetComponent<FlyingObjectsControllerScript>();
 
-                if (obj != null && !obj.isExploading)
+                if (obj != null && !obj.isExploding)
                 {
                     obj.StartToDestroy();
                 }

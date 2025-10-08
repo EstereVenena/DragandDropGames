@@ -103,9 +103,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 1
+  fadeDuration: 1.5
   waveAmplitude: 25
   waveFrequency: 1
-  fadeDuration: 1.5
+  isExploding: 0
 --- !u!58 &4750795794770330912
 CircleCollider2D:
   m_ObjectHideFlags: 0

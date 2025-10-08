@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class ScreenBoundriesScript : MonoBehaviour
+public class ScreenBoundariesScript : MonoBehaviour
 {
     [HideInInspector]
     public Vector3 screenPoint, offset;
