@@ -176,6 +176,19 @@ TextureImporter:
     ignorePlatformSupport: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: tvOS
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
   spriteSheet:
     serializedVersion: 2
     sprites:
@@ -610,7 +623,26 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      Airplain_0: 5864005410723113493
+      Airplain_1: -6820003672831272469
+      Airplain_10: -6552560591009601642
+      Airplain_11: -3696273916310185404
+      Airplain_12: 4937306984293460943
+      Airplain_13: 7857443700622134290
+      Airplain_14: 1077743128841382592
+      Airplain_15: 1114031293224617157
+      Airplain_16: 8630201375949963964
+      Airplain_17: -2528102549430887620
+      Airplain_18: -6966410162798386123
+      Airplain_2: -1670131400106946111
+      Airplain_3: -6973657856617175076
+      Airplain_4: 8331503783339214455
+      Airplain_5: -3011887928664023595
+      Airplain_6: -982648509057053388
+      Airplain_7: -2642474543720193537
+      Airplain_8: 7601187350340043413
+      Airplain_9: 7553107047585653508
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
