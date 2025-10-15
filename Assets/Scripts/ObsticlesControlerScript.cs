@@ -2,154 +2,153 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-[RequireComponent(typeof(CanvasGroup), typeof(RectTransform), typeof(Image))]
 public class ObstaclesControllerScript : MonoBehaviour
 {
-    [HideInInspector]
-    public float speed = 1f;
+    [Header("Motion")]
+    [HideInInspector] public float speed = 1f; // px/sec in UI space
 
-    public float fadeDuration = 1.5f;
-    public float waveAmplitude = 25f;
-    public float waveFrequency = 1f;
+    [Header("Bobbing (Sine)")]
+    public bool bobEnabled = true;
+    [Min(0f)] public float waveAmplitude = 25f;
+    [Min(0f)] public float waveFrequency = 1f;
+    public float phaseOffset = 0f;
 
+    [Header("FX")]
+    public float fadeDuration = 1.0f;
+    public float explosionRadiusPx = 220f;
+
+    [Header("Bounds")]
+    public ScreenBoundriesScript screenBoundriesScript;
+    public float worldEdgeMargin = 0.25f;
+
+    // cached
     private ObjectScript objectScript;
-    private ScreenBoundariesScript screenBoundariesScript;
-
     private CanvasGroup canvasGroup;
-    private RectTransform rectTransform;
+    private RectTransform rt;
     private Image image;
-
     private Color originalColor;
-    private bool isFadingOut = false;
-    public bool isExploding = false;
 
+    // state
+    private bool isFadingOut = false;
+    internal bool isExploding = false;
     private float baseY;
+    private float waveT;
+
+    void Awake()
+    {
+        canvasGroup = GetComponent<CanvasGroup>() ?? gameObject.AddComponent<CanvasGroup>();
+        rt = GetComponent<RectTransform>();
+        image = GetComponent<Image>();
+        if (image) originalColor = image.color;
+
+        objectScript = Object.FindFirstObjectByType<ObjectScript>(FindObjectsInactive.Exclude);
+        if (!screenBoundriesScript)
+            screenBoundriesScript = Object.FindFirstObjectByType<ScreenBoundriesScript>(FindObjectsInactive.Exclude);
+    }
 
     void Start()
     {
-        canvasGroup = GetComponent<CanvasGroup>();
-        rectTransform = GetComponent<RectTransform>();
-        image = GetComponent<Image>();
-        originalColor = image.color;
-
-        baseY = rectTransform.anchoredPosition.y;
-
-        objectScript = FindFirstObjectByType<ObjectScript>();
-        screenBoundariesScript = FindFirstObjectByType<ScreenBoundariesScript>();
-
+        baseY = rt ? rt.anchoredPosition.y : transform.position.y;
+        waveT = phaseOffset;
         StartCoroutine(FadeIn());
     }
 
     void Update()
     {
-        // Wavy horizontal movement
-        float waveOffset = Mathf.Sin(Time.time * waveFrequency) * waveAmplitude;
-        Vector2 pos = rectTransform.anchoredPosition;
-        pos.x -= speed * Time.deltaTime;
-        pos.y = baseY + waveOffset;
-        rectTransform.anchoredPosition = pos;
-
-        float worldX = transform.position.x;
-
-        // Left edge fade out
-        if (speed > 0 && worldX < (screenBoundariesScript.minX + 80) && !isFadingOut)
+        // Move in UI space
+        if (rt)
         {
-            StartToDestroy();
-        }
+            var pos = rt.anchoredPosition;
+            pos.x += speed * Time.deltaTime;
 
-        // Right edge fade out
-        if (speed < 0 && worldX > (screenBoundariesScript.maxX - 80) && !isFadingOut)
-        {
-            StartToDestroy();
-        }
-
-        // Mouse collision with Bomb (without car dragging)
-        if (CompareTag("Bomb") && !isExploding &&
-            RectTransformUtility.RectangleContainsScreenPoint(rectTransform, Input.mousePosition, Camera.main))
-        {
-            Debug.Log("The cursor collided with a bomb! (without car)");
-            TriggerExplosion();
-        }
-
-        // Collision with flying object while dragging
-        if (ObjectScript.drag && !isFadingOut &&
-            RectTransformUtility.RectangleContainsScreenPoint(rectTransform, Input.mousePosition, Camera.main))
-        {
-            Debug.Log("The cursor collided with a flying object!");
-
-            if (ObjectScript.lastDragged != null)
+            if (bobEnabled && waveAmplitude > 0f && waveFrequency > 0f)
             {
-                StartCoroutine(ShrinkAndDestroy(ObjectScript.lastDragged, 0.5f));
-                ObjectScript.lastDragged = null;
-                ObjectScript.drag = false;
+                waveT += Time.deltaTime * Mathf.PI * 2f * waveFrequency;
+                pos.y = baseY + Mathf.Sin(waveT) * waveAmplitude;
             }
+            else pos.y = baseY;
 
-            StartToDestroy();
+            rt.anchoredPosition = pos;
+
+            // Despawn vs world bounds using rt.position.x
+            if (screenBoundriesScript && !isFadingOut)
+            {
+                float xWorld = rt.position.x;
+                if (speed > 0f && xWorld > (screenBoundriesScript.maxX + worldEdgeMargin)) BeginFadeOut();
+                if (speed < 0f && xWorld < (screenBoundriesScript.minX - worldEdgeMargin)) BeginFadeOut();
+            }
+        }
+        else
+        {
+            transform.position += new Vector3(speed * Time.deltaTime, 0f, 0f);
+        }
+
+        // Hover explode for items tagged Bomb (optional)
+        if (CompareTag("Bomb") && !isExploding && rt &&
+            RectTransformUtility.RectangleContainsScreenPoint(rt, Input.mousePosition, null))
+        {
+            TriggerExplosion();
         }
     }
 
     public void TriggerExplosion()
     {
+        if (isExploding) return;
         isExploding = true;
-        objectScript.effects.PlayOneShot(objectScript.audioCli[6], 5f);
 
-        if (TryGetComponent<Animator>(out Animator animator))
+        if (objectScript) objectScript.effects.PlayOneShot(objectScript.audioCli[6], 5f);
+        if (TryGetComponent<Animator>(out var anim)) anim.SetBool("explode", true);
+
+        if (image)
         {
-            animator.SetBool("explode", true);
+            image.color = Color.red;
+            StartCoroutine(RecoverColor(0.4f));
         }
-
-        image.color = Color.red;
-        StartCoroutine(RecoverColor(0.4f));
 
         StartCoroutine(Vibrate());
-        StartCoroutine(WaitBeforeExplode());
+        StartCoroutine(ExplodeNow());
     }
 
-    IEnumerator WaitBeforeExplode()
+    IEnumerator ExplodeNow()
     {
-        float radius = 0f;
+        Vector2 myUI = rt ? (Vector2)rt.position : (Vector2)transform.position;
 
-        if (TryGetComponent<CircleCollider2D>(out CircleCollider2D circleCollider))
+        var victims = Object.FindObjectsByType<ObstaclesControllerScript>(FindObjectsSortMode.None);
+        foreach (var v in victims)
         {
-            radius = circleCollider.radius * transform.lossyScale.x;
+            if (!v || v == this) continue;
+            var vrt = v.GetComponent<RectTransform>();
+            Vector2 theirUI = vrt ? (Vector2)vrt.position : (Vector2)v.transform.position;
+
+            if (Vector2.Distance(myUI, theirUI) <= explosionRadiusPx && !v.isExploding)
+                v.StartToDestroy(Color.cyan);
         }
 
-        yield return new WaitForSeconds(1f);
-        ExplodeAndDestroy(radius);
-        Destroy(gameObject);
+        yield return new WaitForSeconds(0.15f);
+        BeginFadeOut();
     }
 
-    void ExplodeAndDestroy(float radius)
+    public void StartToDestroy(Color c)
     {
-        Collider2D[] hitColliders = Physics2D.OverlapCircleAll(transform.position, radius);
+        if (isFadingOut) return;
 
-        foreach (var hit in hitColliders)
+        if (image)
         {
-            if (hit != null && hit.gameObject != gameObject)
-            {
-                FlyingObjectsControllerScript obj = hit.GetComponent<FlyingObjectsControllerScript>();
-
-                if (obj != null && !obj.isExploding)
-                {
-                    obj.StartToDestroy();
-                }
-            }
-        }
-    }
-
-    public void StartToDestroy()
-    {
-        if (!isFadingOut)
-        {
-            isFadingOut = true;
-            StartCoroutine(FadeOutAndDestroy());
-
-            image.color = Color.cyan;
+            image.color = c;
             StartCoroutine(RecoverColor(0.5f));
-
-            objectScript.effects.PlayOneShot(objectScript.audioCli[5]);
-            StartCoroutine(Vibrate());
         }
+
+        StartCoroutine(Vibrate());
+        if (objectScript) objectScript.effects.PlayOneShot(objectScript.audioCli[5]);
+
+        BeginFadeOut();
+    }
+
+    void BeginFadeOut()
+    {
+        if (isFadingOut) return;
+        isFadingOut = true;
+        StartCoroutine(FadeOutAndDestroy());
     }
 
     IEnumerator FadeIn()
@@ -166,69 +165,35 @@ public class ObstaclesControllerScript : MonoBehaviour
 
     IEnumerator FadeOutAndDestroy()
     {
-        float t = 0f;
-        float startAlpha = canvasGroup.alpha;
-
+        float t = 0f, start = canvasGroup.alpha;
         while (t < fadeDuration)
         {
             t += Time.deltaTime;
-            canvasGroup.alpha = Mathf.Lerp(startAlpha, 0f, t / fadeDuration);
+            canvasGroup.alpha = Mathf.Lerp(start, 0f, t / fadeDuration);
             yield return null;
         }
-
         canvasGroup.alpha = 0f;
         Destroy(gameObject);
-    }
-
-    IEnumerator ShrinkAndDestroy(GameObject target, float duration)
-    {
-        Vector3 originalScale = target.transform.localScale;
-        Quaternion originalRotation = target.transform.rotation;
-
-        float t = 0f;
-
-        while (t < duration)
-        {
-            t += Time.deltaTime;
-            target.transform.localScale = Vector3.Lerp(originalScale, Vector3.zero, t / duration);
-            float angle = Mathf.Lerp(0f, 360f, t / duration);
-            target.transform.rotation = Quaternion.Euler(0f, 0f, angle);
-            yield return null;
-        }
-
-        Destroy(target);
     }
 
     IEnumerator RecoverColor(float seconds)
     {
         yield return new WaitForSeconds(seconds);
-        image.color = originalColor;
+        if (image) image.color = originalColor;
     }
 
     IEnumerator Vibrate()
     {
-        Vector2 originalPosition = rectTransform.anchoredPosition;
-        float duration = 0.3f;
-        float elapsed = 0f;
-        float intensity = 5f;
+        if (!rt) yield break;
+        Vector2 orig = rt.anchoredPosition;
+        float dur = 0.3f, el = 0f, intensity = 5f;
 
-        while (elapsed < duration)
+        while (el < dur)
         {
-            rectTransform.anchoredPosition = originalPosition + Random.insideUnitCircle * intensity;
-            elapsed += Time.deltaTime;
+            rt.anchoredPosition = orig + Random.insideUnitCircle * intensity;
+            el += Time.deltaTime;
             yield return null;
         }
-
-        rectTransform.anchoredPosition = originalPosition;
-    }
-
-    void OnDrawGizmosSelected()
-    {
-        if (TryGetComponent<CircleCollider2D>(out CircleCollider2D circleCollider))
-        {
-            Gizmos.color = Color.red;
-            float radius = circleCollider.radius * transform.lossyScale.x;
-            Gizmos.DrawWireSphere(transform.position, radius);
-        }
+        rt.anchoredPosition = orig;
     }
 }

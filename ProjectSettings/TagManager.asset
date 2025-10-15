@@ -16,6 +16,7 @@ TagManager:
   - CarE46
   - CarB2
   - CarE61
+  - Bomb
   layers:
   - Default
   - TransparentFX

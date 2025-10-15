@@ -1,46 +1,53 @@
+// Assets/Scripts/BackButtonScript.cs
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class BackToTitle : MonoBehaviour
+[RequireComponent(typeof(UnityEngine.UI.Button))]
+public class BackButtonScript : MonoBehaviour
 {
-    [SerializeField] private string titleSceneName = "TitleScene";
+    [Header("Scene to load (must be in Build Settings)")]
+    public string sceneToLoad = "TitleScene";
 
-    // Hook this to the Back button's OnClick()
-    public void Go()
+    [Header("Optional SFX")]
+    public AudioSource audioSource;
+    public AudioClip clickSfx;
+
+    bool _loading;
+
+    void Awake()
     {
-        Debug.Log($"[BackToTitle] Clicked. Loading '{titleSceneName}'...");
-        if (!IsSceneInBuild(titleSceneName))
+        // Make sure time isn't paused when this scene opens.
+        if (Time.timeScale == 0f) Time.timeScale = 1f;
+
+        // Wire automatically if you forgot to do it in the Inspector.
+        var btn = GetComponent<UnityEngine.UI.Button>();
+        btn.onClick.RemoveAllListeners();
+        btn.onClick.AddListener(OnBackClicked);
+    }
+
+    public void OnBackClicked()
+    {
+        if (_loading) return;
+        _loading = true;
+
+        // Play click SFX (optional)
+        if (audioSource && clickSfx)
+            audioSource.PlayOneShot(clickSfx);
+
+        // Basic safety checks
+        if (string.IsNullOrEmpty(sceneToLoad))
         {
-            Debug.LogError($"[BackToTitle] Scene '{titleSceneName}' is NOT in Build Settings.");
+            Debug.LogWarning("[BackButton] 'sceneToLoad' not set.");
+            _loading = false;
             return;
         }
-        SceneManager.LoadScene(titleSceneName, LoadSceneMode.Single);
-    }
 
-    // Optional: Esc / Android Back navigates to TitleScene too
-    private void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.Escape))
-            Go();
-    }
-
-    private bool IsSceneInBuild(string name)
-    {
-        for (int i = 0; i < SceneManager.sceneCountInBuildSettings; i++)
-        {
-            var path = SceneUtility.GetScenePathByBuildIndex(i);
-            var n = System.IO.Path.GetFileNameWithoutExtension(path);
-            if (n == name) return true;
-        }
-        return false;
-    }
-
+        // Ensure scene is actually added to Build Settings (editor only hint)
 #if UNITY_EDITOR
-    // Lets you drag the scene asset in Inspector (prevents typos)
-    [SerializeField] private UnityEditor.SceneAsset sceneAsset;
-    private void OnValidate()
-    {
-        if (sceneAsset != null) titleSceneName = sceneAsset.name;
-    }
+        if (!Application.CanStreamedLevelBeLoaded(sceneToLoad))
+            Debug.LogWarning($"[BackButton] Scene '{sceneToLoad}' not found in Build Settings.");
 #endif
+
+        SceneManager.LoadScene(sceneToLoad);
+    }
 }
