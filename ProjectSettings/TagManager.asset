@@ -17,6 +17,7 @@ TagManager:
   - CarB2
   - CarE61
   - Bomb
+  - PlayArea
   layers:
   - Default
   - TransparentFX

@@ -13,7 +13,8 @@ GameObject:
   - component: {fileID: 435039729827477191}
   - component: {fileID: 7805925042815468465}
   - component: {fileID: 6605059524386076779}
-  - component: {fileID: -2386973782480383816}
+  - component: {fileID: -3568969330712818925}
+  - component: {fileID: 3738791373642425033}
   m_Layer: 5
   m_Name: Ambulance
   m_TagString: Medicine
@@ -83,6 +84,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playArea: {fileID: 0}
+  playAreaTag: PlayArea
+  noDropZoneTag: NoDropZone
+  noDropZones:
+  - {fileID: 0}
+  - {fileID: 0}
+  hintText: {fileID: 0}
   rotateSpeedDeg: 90
   scaleSpeedX: 1
   scaleSpeedY: 1
@@ -90,6 +97,16 @@ MonoBehaviour:
   minScale: {x: 0.3, y: 0.3}
   maxScale: {x: 3, y: 3}
   preserveAspectWhileScaling: 0
+  allowMirroring: 1
+  allowReset: 1
+  defaultScale: {x: 1, y: 1}
+  saveTransformState: 1
+  saveKeyPrefix: DragCar_
+  normalColor: {r: 1, g: 1, b: 1, a: 1}
+  forbiddenColor: {r: 1, g: 0.35, b: 0.35, a: 1}
+  forbiddenEdgePadding: 8
+  showGhostPreview: 1
+  restoreOnReject: 0
 --- !u!222 &7805925042815468465
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -110,7 +127,7 @@ CanvasGroup:
   m_Interactable: 1
   m_BlocksRaycasts: 1
   m_IgnoreParentGroups: 0
---- !u!114 &-2386973782480383816
+--- !u!114 &-3568969330712818925
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -119,8 +136,23 @@ MonoBehaviour:
   m_GameObject: {fileID: 1693179382146213389}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 77dccadcc2f3da44084e463256e8a872, type: 3}
+  m_Script: {fileID: 11500000, guid: 02415aad4bcef5c40860e6de94963a1c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  carId: 1
-  snapDistanceFactor: 0.35
+--- !u!114 &3738791373642425033
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1693179382146213389}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e3301e927eebc6a4c9fbe75af4f958f6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  liftClip: {fileID: 8300000, guid: 4711edf8725c91d44845158ba89e2d2e, type: 3}
+  playOnBeginDrag: 1
+  alsoPlayOnPointerDown: 0
+  volume: 1
+  pitchJitter: 0.06

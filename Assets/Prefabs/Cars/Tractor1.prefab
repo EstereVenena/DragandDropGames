@@ -13,7 +13,8 @@ GameObject:
   - component: {fileID: 22127464488913740}
   - component: {fileID: 4530883367162499512}
   - component: {fileID: 4342337085640568115}
-  - component: {fileID: 3531339485447107205}
+  - component: {fileID: -7132398307888781360}
+  - component: {fileID: 300230399233543048}
   m_Layer: 5
   m_Name: Tractor1
   m_TagString: Trctor1
@@ -83,6 +84,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playArea: {fileID: 0}
+  playAreaTag: PlayArea
+  noDropZoneTag: NoDropZone
+  noDropZones: []
+  hintText: {fileID: 0}
   rotateSpeedDeg: 90
   scaleSpeedX: 1
   scaleSpeedY: 1
@@ -90,6 +95,16 @@ MonoBehaviour:
   minScale: {x: 0.3, y: 0.3}
   maxScale: {x: 3, y: 3}
   preserveAspectWhileScaling: 0
+  allowMirroring: 1
+  allowReset: 1
+  defaultScale: {x: 1, y: 1}
+  saveTransformState: 1
+  saveKeyPrefix: DragCar_
+  normalColor: {r: 1, g: 1, b: 1, a: 1}
+  forbiddenColor: {r: 1, g: 0.35, b: 0.35, a: 1}
+  forbiddenEdgePadding: 8
+  showGhostPreview: 1
+  restoreOnReject: 0
 --- !u!222 &4530883367162499512
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -110,7 +125,7 @@ CanvasGroup:
   m_Interactable: 1
   m_BlocksRaycasts: 1
   m_IgnoreParentGroups: 0
---- !u!114 &3531339485447107205
+--- !u!114 &-7132398307888781360
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -119,8 +134,23 @@ MonoBehaviour:
   m_GameObject: {fileID: 2502371836913776184}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 77dccadcc2f3da44084e463256e8a872, type: 3}
+  m_Script: {fileID: 11500000, guid: 02415aad4bcef5c40860e6de94963a1c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  carId: 11
-  snapDistanceFactor: 0.35
+--- !u!114 &300230399233543048
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2502371836913776184}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e3301e927eebc6a4c9fbe75af4f958f6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  liftClip: {fileID: 8300000, guid: e93563c1e8c508d4cac17843a623df57, type: 3}
+  playOnBeginDrag: 1
+  alsoPlayOnPointerDown: 0
+  volume: 1
+  pitchJitter: 0.06

@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 8652960051032704496}
   - component: {fileID: 7838704547031938927}
   - component: {fileID: 4109341444599891571}
+  - component: {fileID: 8865752187509167719}
   m_Layer: 5
   m_Name: Airoplane1
   m_TagString: Untagged
@@ -30,14 +31,14 @@ RectTransform:
   m_GameObject: {fileID: 8691226276851293932}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.8, y: 0.8, z: 0.8}
+  m_LocalScale: {x: 0.7, y: 0.7, z: 0.7}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -1116, y: -155}
+  m_AnchoredPosition: {x: 1062, y: -119}
   m_SizeDelta: {x: 170, y: 185}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &2983660072500648120
@@ -103,9 +104,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 1
-  waveAmplitude: 25
+  bobEnabled: 1
+  waveAmplitude: 5
   waveFrequency: 1
+  phaseOffset: 0
   fadeDuration: 1.5
+  explosionRadiusPx: 220
+  screenBoundriesScript: {fileID: 0}
+  worldEdgeMargin: 0.25
 --- !u!61 &4109341444599891571
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -152,3 +158,18 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 170, y: 100}
   m_EdgeRadius: 0
+--- !u!114 &8865752187509167719
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8691226276851293932}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 41ea2451347371949a91c8fb6cc4937d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  primary: 1
+  visualRootName: Sprite
+  extraInvert: 0

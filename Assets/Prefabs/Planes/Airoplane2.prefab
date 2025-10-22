@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 8921439452264739128}
   - component: {fileID: 4174292187829651910}
   - component: {fileID: 3078147879358498149}
+  - component: {fileID: 7609542955260800703}
   m_Layer: 5
   m_Name: Airoplane2
   m_TagString: Untagged
@@ -103,9 +104,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 1
-  waveAmplitude: 25
+  bobEnabled: 1
+  waveAmplitude: 5
   waveFrequency: 1
+  phaseOffset: 0
   fadeDuration: 1.5
+  explosionRadiusPx: 220
+  screenBoundriesScript: {fileID: 0}
+  worldEdgeMargin: 0.25
 --- !u!61 &3078147879358498149
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -152,3 +158,18 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 170, y: 68}
   m_EdgeRadius: 0
+--- !u!114 &7609542955260800703
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9558280280068524}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 41ea2451347371949a91c8fb6cc4937d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  primary: 0
+  visualRootName: Sprite
+  extraInvert: 0

@@ -10,8 +10,8 @@ GameObject:
   m_Component:
   - component: {fileID: 3359208203899612978}
   - component: {fileID: 2170015586714789731}
-  - component: {fileID: 1586095324493104599}
   - component: {fileID: 2439499229383164466}
+  - component: {fileID: 1586095324493104599}
   - component: {fileID: 6375858123232157933}
   - component: {fileID: 3815830896732227878}
   - component: {fileID: 6609578547049100419}
@@ -72,27 +72,6 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &1586095324493104599
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2255292867483279292}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7f71981aba8e41c43885f7f704144a76, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  speed: 1
-  bobEnabled: 1
-  waveAmplitude: 25
-  waveFrequency: 1
-  phaseOffset: 0
-  fadeDuration: 1
-  explosionRadiusPx: 400
-  screenBoundriesScript: {fileID: 0}
-  worldEdgeMargin: 0.25
 --- !u!58 &2439499229383164466
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -129,6 +108,27 @@ CircleCollider2D:
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
   m_Radius: 50
+--- !u!114 &1586095324493104599
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2255292867483279292}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7f71981aba8e41c43885f7f704144a76, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  speed: 1
+  bobEnabled: 1
+  waveAmplitude: 25
+  waveFrequency: 1
+  phaseOffset: 0
+  fadeDuration: 1
+  explosionRadiusPx: 400
+  screenBoundriesScript: {fileID: 0}
+  worldEdgeMargin: 0.25
 --- !u!114 &6375858123232157933
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -142,10 +142,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 0
-  fuseSeconds: 5
+  fuseSeconds: 20
   waveAmplitude: 25
   waveFrequency: 1
   radiusPx: 220
+  explodeOnClick: 1
+  explodeOnDragOverlap: 1
+  addPenaltyOnClick: 0
+  addPenaltyOnDragOverlap: 1
+  addPenaltyOnTimeout: 0
+  penaltyPerExplosion: 1
+  playArea: {fileID: 0}
+  requireVisibleInPlayArea: 1
+  penaltyUI: {fileID: 0}
 --- !u!222 &3815830896732227878
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -185,7 +194,7 @@ MonoBehaviour:
   - {fileID: 3251880062016884906, guid: b4aa037f519bfe942a7da8e36ac54cf7, type: 3}
   - {fileID: -83736079354487072, guid: b4aa037f519bfe942a7da8e36ac54cf7, type: 3}
   - {fileID: -2932849115442837780, guid: b4aa037f519bfe942a7da8e36ac54cf7, type: 3}
-  fuseSeconds: 5
+  fuseSeconds: 20
   explosionFPS: 24
   sfx: {fileID: 0}
   fuseSfx: {fileID: 8300000, guid: a5abd8148eba6214183d42a737819c3c, type: 3}

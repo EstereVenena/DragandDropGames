@@ -11,7 +11,6 @@ GameObject:
   - component: {fileID: 1156265882878092414}
   - component: {fileID: 840895508078484189}
   - component: {fileID: 9196705841819388211}
-  - component: {fileID: 3425562445160535666}
   - component: {fileID: 1006783894896382278}
   m_Layer: 5
   m_Name: CarE46Place
@@ -81,21 +80,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5d0d72629a9b9b488d495e609718071, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  requiredTag: 
+  requireRotation: 1
   rotationToleranceDeg: 10
-  sizeTolerancePercent: 0.1
---- !u!114 &3425562445160535666
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3045341858924082164}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 83ccdd5de387a6c4c92ec51b49501f3f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  slotId: 4
+  requireScale: 1
+  sizeTolerancePercent: 0.2
+  snapDistance: 120
+  snapOnCorrect: 1
+  lockOnCorrect: 1
+  debugLogs: 1
 --- !u!222 &1006783894896382278
 CanvasRenderer:
   m_ObjectHideFlags: 0

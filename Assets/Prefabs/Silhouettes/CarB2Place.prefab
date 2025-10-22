@@ -11,7 +11,6 @@ GameObject:
   - component: {fileID: 5902578383364526705}
   - component: {fileID: 1785506132493117741}
   - component: {fileID: 4604612451684760635}
-  - component: {fileID: 8538127890914217972}
   - component: {fileID: 4160083010969131151}
   m_Layer: 5
   m_Name: CarB2Place
@@ -81,21 +80,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5d0d72629a9b9b488d495e609718071, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rotationToleranceDeg: 10
-  sizeTolerancePercent: 0.1
---- !u!114 &8538127890914217972
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6537690699514926062}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 83ccdd5de387a6c4c92ec51b49501f3f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  slotId: 3
+  requiredTag: 
+  requireRotation: 1
+  rotationToleranceDeg: 45
+  requireScale: 1
+  sizeTolerancePercent: 0.35
+  snapDistance: 250
+  snapOnCorrect: 1
+  lockOnCorrect: 1
+  debugLogs: 1
 --- !u!222 &4160083010969131151
 CanvasRenderer:
   m_ObjectHideFlags: 0

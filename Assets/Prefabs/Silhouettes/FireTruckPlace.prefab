@@ -11,7 +11,6 @@ GameObject:
   - component: {fileID: 1216343019400764065}
   - component: {fileID: 7794756902378387628}
   - component: {fileID: 1178896192547300817}
-  - component: {fileID: 6663818778788895152}
   - component: {fileID: 2156862194260371528}
   m_Layer: 5
   m_Name: FireTruckPlace
@@ -81,21 +80,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5d0d72629a9b9b488d495e609718071, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rotationToleranceDeg: 10
-  sizeTolerancePercent: 0.1
---- !u!114 &6663818778788895152
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1604100296043152346}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 83ccdd5de387a6c4c92ec51b49501f3f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  slotId: 8
+  requiredTag: 
+  requireRotation: 1
+  rotationToleranceDeg: 45
+  requireScale: 1
+  sizeTolerancePercent: 0.35
+  snapDistance: 250
+  snapOnCorrect: 1
+  lockOnCorrect: 1
+  debugLogs: 1
 --- !u!222 &2156862194260371528
 CanvasRenderer:
   m_ObjectHideFlags: 0
