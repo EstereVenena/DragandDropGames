@@ -1070,8 +1070,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playArea: {fileID: 743212594}
   paddingPercent: 0.02
-  minX: -942.7701
-  maxX: 942.7701
+  minX: -1119.4368
+  maxX: 766.10345
   minY: -529.09515
   maxY: 529.09515
   screenPoint: {x: 0, y: 0, z: 0}
@@ -1314,7 +1314,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0.000061035156, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: -1153.7202, y: -19.671}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &916245535
@@ -2395,9 +2395,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 55f945e7f4225fe46949b92223b336d4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  masterSlider: {fileID: 0}
-  musicSlider: {fileID: 0}
-  sfxSlider: {fileID: 0}
 --- !u!82 &1647117575
 AudioSource:
   m_ObjectHideFlags: 0
@@ -2419,7 +2416,7 @@ AudioSource:
   SpatializePostEffects: 0
   Priority: 128
   DopplerLevel: 1
-  MinDistance: 1
+  MinDistance: 10.695129
   MaxDistance: 500
   Pan2D: 0
   rolloffMode: 0
