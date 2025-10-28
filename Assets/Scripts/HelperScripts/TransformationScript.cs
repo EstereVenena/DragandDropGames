@@ -1,70 +1,90 @@
-using UnityEngine;
+﻿using UnityEngine;
 
 public class TransformationScript : MonoBehaviour
 {
+    private float rotationSpeed = 90f;      // Degrees per second for rotation
+    private float scaleSpeed = 0.5f;        // Scale speed for touch pinch
+    private float minScale = 0.3f;
+    private float maxScale = 0.9f;
+
     void Update()
     {
-      if(ObjectScript.lastDragged != null) {
-            if(Input.GetKey(KeyCode.Z)) {
-                ObjectScript.lastDragged.GetComponent<RectTransform>().transform.Rotate(
-                    0, 0, Time.deltaTime * 15f);
-            }
+        if (ObjectScript.lastDragged == null) return;
 
-            if (Input.GetKey(KeyCode.X))
+#if UNITY_STANDALONE || UNITY_EDITOR
+        HandleKeyboardInput();
+#elif UNITY_ANDROID || UNITY_IOS
+        HandleTouchInput();
+#endif
+    }
+
+    // --- Desktop Controls (Windows / Editor) ---
+    void HandleKeyboardInput()
+    {
+        RectTransform target = ObjectScript.lastDragged.GetComponent<RectTransform>();
+
+        // Rotate clockwise
+        if (Input.GetKey(KeyCode.Z))
+            target.Rotate(0, 0, Time.deltaTime * rotationSpeed);
+
+        // Rotate counterclockwise
+        if (Input.GetKey(KeyCode.X))
+            target.Rotate(0, 0, -Time.deltaTime * rotationSpeed);
+
+        Vector3 scale = target.localScale;
+
+        if (Input.GetKey(KeyCode.UpArrow))
+            scale.y = Mathf.Min(scale.y + 0.005f, maxScale);
+        if (Input.GetKey(KeyCode.DownArrow))
+            scale.y = Mathf.Max(scale.y - 0.005f, minScale);
+        if (Input.GetKey(KeyCode.LeftArrow))
+            scale.x = Mathf.Max(scale.x - 0.005f, minScale);
+        if (Input.GetKey(KeyCode.RightArrow))
+            scale.x = Mathf.Min(scale.x + 0.005f, maxScale);
+
+        target.localScale = scale;
+    }
+
+    // --- Mobile Controls (Android / iOS) ---
+    void HandleTouchInput()
+    {
+        RectTransform target = ObjectScript.lastDragged.GetComponent<RectTransform>();
+
+        // One-finger drag to rotate
+        if (Input.touchCount == 1)
+        {
+            Touch touch = Input.GetTouch(0);
+            if (touch.phase == TouchPhase.Moved)
             {
-                ObjectScript.lastDragged.GetComponent<RectTransform>().transform.Rotate(
-                    0, 0, -Time.deltaTime * 15f);
+                float rotation = -touch.deltaPosition.x * 0.3f;
+                target.Rotate(0, 0, rotation);
             }
+        }
 
-            if (Input.GetKey(KeyCode.UpArrow))
-            {
-                if(ObjectScript.lastDragged.GetComponent<RectTransform>().transform.localScale.y < 0.9f)
-                {
-                    ObjectScript.lastDragged.GetComponent<RectTransform>().transform.localScale = 
-                        new Vector3(
-                        ObjectScript.lastDragged.GetComponent<RectTransform>().transform.localScale.x,
-                        ObjectScript.lastDragged.GetComponent<RectTransform>().transform.localScale.y+0.005f,
-                        1f);
-                }
-            }
+        // Two-finger pinch to scale + twist to rotate
+        if (Input.touchCount == 2)
+        {
+            Touch t0 = Input.GetTouch(0);
+            Touch t1 = Input.GetTouch(1);
 
-            if (Input.GetKey(KeyCode.DownArrow))
-            {
-                if (ObjectScript.lastDragged.GetComponent<RectTransform>().transform.localScale.y > 0.3f)
-                {
-                    ObjectScript.lastDragged.GetComponent<RectTransform>().transform.localScale =
-                    new Vector3(
-                    ObjectScript.lastDragged.GetComponent<RectTransform>().transform.localScale.x,
-                    ObjectScript.lastDragged.GetComponent<RectTransform>().transform.localScale.y - 0.005f,
-                    1f);
-                }
+            Vector2 prevT0 = t0.position - t0.deltaPosition;
+            Vector2 prevT1 = t1.position - t1.deltaPosition;
 
-            }
+            float prevDist = (prevT0 - prevT1).magnitude;
+            float currDist = (t0.position - t1.position).magnitude;
+            float delta = currDist - prevDist;
 
-            if (Input.GetKey(KeyCode.LeftArrow))
-            {
-                if (ObjectScript.lastDragged.GetComponent<RectTransform>().transform.localScale.x > 0.3f)
-                {
-                    ObjectScript.lastDragged.GetComponent<RectTransform>().transform.localScale =
-                        new Vector3(
-                        ObjectScript.lastDragged.GetComponent<RectTransform>().transform.localScale.x - 0.005f,
-                        ObjectScript.lastDragged.GetComponent<RectTransform>().transform.localScale.y,
-                        1f);
-                }
-            }
+            // Scale (pinch)
+            Vector3 scale = target.localScale;
+            float newScale = scale.x + (delta * scaleSpeed * Time.deltaTime * 0.01f);
+            newScale = Mathf.Clamp(newScale, minScale, maxScale);
+            target.localScale = new Vector3(newScale, newScale, 1f);
 
-            if (Input.GetKey(KeyCode.RightArrow))
-            {
-                if (ObjectScript.lastDragged.GetComponent<RectTransform>().transform.localScale.x < 0.9f)
-                {
-                    ObjectScript.lastDragged.GetComponent<RectTransform>().transform.localScale =
-                        new Vector3(
-                        ObjectScript.lastDragged.GetComponent<RectTransform>().transform.localScale.x + 0.005f,
-                        ObjectScript.lastDragged.GetComponent<RectTransform>().transform.localScale.y,
-                        1f);
-                }
-            }
-
+            // Optional: twist gesture rotates object
+            Vector2 prevDir = (prevT1 - prevT0).normalized;
+            Vector2 currDir = (t1.position - t0.position).normalized;
+            float angle = Vector2.SignedAngle(prevDir, currDir);
+            target.Rotate(0, 0, angle);
         }
     }
 }

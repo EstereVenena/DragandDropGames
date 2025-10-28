@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class ScreenBoundriesScript : MonoBehaviour
+public class ScreenBoundariesScript : MonoBehaviour
 {
     [Header("Use a UI Panel (RectTransform) as the bounds (recommended)")]
     public RectTransform playArea;
@@ -10,6 +10,9 @@ public class ScreenBoundriesScript : MonoBehaviour
 
     [Header("Computed (World Units)")]
     public float minX, maxX, minY, maxY;
+
+    // Optional world bounds rectangle for reference
+    public Rect worldBounds = new Rect(-960, -560, 1920, 1080);
 
     // Legacy fields for drag code compatibility
     [HideInInspector] public Vector3 screenPoint;
@@ -30,7 +33,7 @@ public class ScreenBoundriesScript : MonoBehaviour
         if (playArea)
         {
             var corners = new Vector3[4];
-            playArea.GetWorldCorners(corners); // 0 BL, 2 TR
+            playArea.GetWorldCorners(corners); // 0 = Bottom Left, 2 = Top Right
             Vector3 bl = corners[0];
             Vector3 tr = corners[2];
             minX = bl.x; minY = bl.y; maxX = tr.x; maxY = tr.y;
@@ -38,7 +41,11 @@ public class ScreenBoundriesScript : MonoBehaviour
         else
         {
             Camera cam = Camera.main;
-            if (!cam) { Debug.LogWarning("[ScreenBoundries] No Camera.main"); return; }
+            if (!cam)
+            {
+                Debug.LogWarning("[ScreenBoundariesScript] No Camera.main found.");
+                return;
+            }
 
             float depth = Mathf.Abs(cam.transform.position.z);
             Vector3 bl = cam.ScreenToWorldPoint(new Vector3(0f, 0f, depth));
@@ -47,16 +54,21 @@ public class ScreenBoundriesScript : MonoBehaviour
             float padX = (tr.x - bl.x) * paddingPercent;
             float padY = (tr.y - bl.y) * paddingPercent;
 
-            minX = bl.x + padX; maxX = tr.x - padX;
-            minY = bl.y + padY; maxY = tr.y - padY;
+            minX = bl.x + padX;
+            maxX = tr.x - padX;
+            minY = bl.y + padY;
+            maxY = tr.y - padY;
         }
+
+        // Update worldBounds rect
+        worldBounds = new Rect(minX, minY, maxX - minX, maxY - minY);
     }
 
     void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.green;
         Vector3 center = new((minX + maxX) * 0.5f, (minY + maxY) * 0.5f, 0f);
-        Vector3 size   = new(Mathf.Abs(maxX - minX), Mathf.Abs(maxY - minY), 0f);
+        Vector3 size = new(Mathf.Abs(maxX - minX), Mathf.Abs(maxY - minY), 0f);
         Gizmos.DrawWireCube(center, size);
     }
 

@@ -54,7 +54,7 @@ public class ObstaclesSpawnScript : MonoBehaviour
         // Try to resolve playArea if not assigned
         if (!playArea)
         {
-            var sb = FindFirstObjectByType<ScreenBoundriesScript>(FindObjectsInactive.Exclude);
+            var sb = FindFirstObjectByType<ScreenBoundariesScript>(FindObjectsInactive.Exclude);
             if (sb && sb.playArea) playArea = sb.playArea;
         }
         if (!playArea)

@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class BombController : MonoBehaviour, IPointerClickHandler
+public class BombController : MonoBehaviour, IPointerClickHandler, IPointerDownHandler
 {
     public enum ExplosionCause { Timeout, Click, DragOverlap }
 
@@ -31,6 +31,9 @@ public class BombController : MonoBehaviour, IPointerClickHandler
     [Header("Penalty Hook")]
     public PenaltyCounterUI penaltyUI;
 
+    [Header("Mobile Feedback")]
+    public bool vibrateOnExplosion = true;
+
     // Internal
     RectTransform rt;
     float baseY;
@@ -46,11 +49,11 @@ public class BombController : MonoBehaviour, IPointerClickHandler
         if (rootCanvas && rootCanvas.renderMode == RenderMode.ScreenSpaceCamera)
             uiCam = rootCanvas.worldCamera;
 
-        // make sure it’s clickable
+        // ensure clickable
         var img = GetComponent<Image>();
         if (img) img.raycastTarget = true;
 
-        // fallback auto-find
+        // fallback for penalty counter
         if (penaltyUI == null)
             penaltyUI = FindFirstObjectByType<PenaltyCounterUI>(FindObjectsInactive.Exclude);
     }
@@ -97,39 +100,64 @@ public class BombController : MonoBehaviour, IPointerClickHandler
             Explode(ExplosionCause.DragOverlap);
     }
 
+    // ---------------- touch/click input ----------------
+
     public void OnPointerClick(PointerEventData eventData)
     {
+        // fallback click (desktop)
         if (explodeOnClick && !exploded)
             Explode(ExplosionCause.Click);
     }
 
-    // ---------------- core ----------------
+    public void OnPointerDown(PointerEventData eventData)
+    {
+        // instant touch reaction (mobile)
+        if (explodeOnClick && !exploded)
+            Explode(ExplosionCause.Click);
+    }
+
+    // ---------------- core explosion logic ----------------
 
     void Explode(ExplosionCause cause)
     {
         if (exploded) return;
         exploded = true;
 
-        // visual/audio anim (if present)
+        // vibration feedback (mobile)
+#if UNITY_ANDROID || UNITY_IOS
+        if (vibrateOnExplosion) Handheld.Vibrate();
+#endif
+
+        // visual/audio animation
         var anim = GetComponent<BombExplosionAnim>();
         if (anim) StartCoroutine(PlayAnimThenDestroy(anim));
-        else       StartCoroutine(FadeOut());
+        else StartCoroutine(FadeOut());
+
+        // Convert pixel radius to world units if needed
+        float radiusWorld = radiusPx;
+        if (uiCam)
+        {
+            Vector3 centerScreen = rt.position;
+            Vector3 worldA = uiCam.ScreenToWorldPoint(centerScreen);
+            Vector3 worldB = uiCam.ScreenToWorldPoint(centerScreen + new Vector3(radiusPx, 0f));
+            radiusWorld = Vector3.Distance(worldA, worldB);
+        }
 
         // “damage” obstacles
         Vector3 center = rt ? (Vector3)rt.position : transform.position;
-        var hits = Physics2D.OverlapCircleAll(center, radiusPx);
+        var hits = Physics2D.OverlapCircleAll(center, radiusWorld);
         foreach (var h in hits)
         {
             var target = h ? h.GetComponent<ObstaclesControllerScript>() : null;
             if (target) target.StartToDestroy(Color.red);
         }
 
-        // Penalty conditions
+        // Penalty logic
         bool inside = !requireVisibleInPlayArea || IsInsidePlayArea(uiCam);
         bool shouldAdd =
-            (cause == ExplosionCause.Click       && addPenaltyOnClick) ||
+            (cause == ExplosionCause.Click && addPenaltyOnClick) ||
             (cause == ExplosionCause.DragOverlap && addPenaltyOnDragOverlap) ||
-            (cause == ExplosionCause.Timeout     && addPenaltyOnTimeout);
+            (cause == ExplosionCause.Timeout && addPenaltyOnTimeout);
 
         if (shouldAdd && inside && penaltyUI)
         {
@@ -162,6 +190,8 @@ public class BombController : MonoBehaviour, IPointerClickHandler
         }
         Destroy(gameObject);
     }
+
+    // ---------------- helpers ----------------
 
     static bool OverlapsUI(RectTransform a, RectTransform b, Camera cam)
     {

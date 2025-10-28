@@ -1,4 +1,3 @@
-// Assets/Scripts/BombExplosionAnim.cs
 using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
@@ -9,28 +8,35 @@ public class BombExplosionAnim : MonoBehaviour
     [Header("Sprites")]
     public Sprite unlitSprite;        // single image
     public Sprite litSprite;          // single image
-    public Sprite[] explosionFrames;  // 4 sliced sprites from the sheet
+    public Sprite[] explosionFrames;  // 4+ sliced sprites from the sheet
 
     [Header("Timing")]
     public float fuseSeconds = 2f;    // time from lit to explosion
-    public float explosionFPS = 12f;  // how fast to play the 4 frames
+    public float explosionFPS = 12f;  // how fast to play the frames
 
     [Header("Audio (optional)")]
     public AudioSource sfx;
     public AudioClip fuseSfx;
     public AudioClip explodeSfx;
 
-    // If your old bomb logic needs a radius:
-    public float damageRadius = 220f;
+    [Header("VFX / Feedback (optional)")]
+    public ParticleSystem explosionParticles;
+    public bool vibrateOnExplosion = true;
 
-    Image uiImg;               // for UI bombs
-    SpriteRenderer sr;         // for world-space bombs
+    [Header("Damage")]
+    public float damageRadius = 100f;
+    public bool autoDamage = true;    // disable if BombController already handles it
+
+    // Cached components
+    Image uiImg;
+    SpriteRenderer sr;
     bool exploded;
+    Coroutine fuseRoutine;
 
     void Awake()
     {
         uiImg = GetComponent<Image>();
-        sr    = GetComponent<SpriteRenderer>();
+        sr = GetComponent<SpriteRenderer>();
 
         SetSprite(unlitSprite);
         if (uiImg) uiImg.preserveAspect = true;
@@ -38,35 +44,35 @@ public class BombExplosionAnim : MonoBehaviour
 
     void OnEnable()
     {
-        // Start the fuse automatically; or call StartFuse() from your spawner/controller.
-        StartCoroutine(FuseRoutine());
+        // Optional: start automatically when spawned
+        StartFuse();
     }
 
     public void StartFuse(float overrideSeconds = -1f)
     {
         if (overrideSeconds > 0f) fuseSeconds = overrideSeconds;
-        StopAllCoroutines();
-        StartCoroutine(FuseRoutine());
+
+        // Prevent multiple concurrent coroutines
+        if (fuseRoutine != null)
+            StopCoroutine(fuseRoutine);
+
+        fuseRoutine = StartCoroutine(FuseRoutine());
     }
 
     IEnumerator FuseRoutine()
     {
-        // show lit
         SetSprite(litSprite);
         if (sfx && fuseSfx) sfx.PlayOneShot(fuseSfx);
 
-        // wait fuse
         float t = 0f;
-        while (t < fuseSeconds)
+        while (t < fuseSeconds && !exploded)
         {
             t += Time.deltaTime;
             yield return null;
         }
 
-        // explode
-        yield return StartCoroutine(ExplosionRoutine());
-        DoDamage();
-        Destroy(gameObject, 0.05f);
+        if (!exploded)
+            yield return ExplosionRoutine();
     }
 
     IEnumerator ExplosionRoutine()
@@ -74,33 +80,45 @@ public class BombExplosionAnim : MonoBehaviour
         if (exploded) yield break;
         exploded = true;
 
-        if (sfx && explodeSfx) sfx.PlayOneShot(explodeSfx);
+        // Haptic feedback (mobile only)
+#if UNITY_ANDROID || UNITY_IOS
+        if (vibrateOnExplosion)
+            Handheld.Vibrate();
+#endif
+
+        if (sfx && explodeSfx)
+            sfx.PlayOneShot(explodeSfx);
+
+        if (explosionParticles)
+            explosionParticles.Play();
 
         if (explosionFrames != null && explosionFrames.Length > 0)
         {
             float frameTime = 1f / Mathf.Max(1f, explosionFPS);
-            for (int i = 0; i < explosionFrames.Length; i++)
+            foreach (var frame in explosionFrames)
             {
-                SetSprite(explosionFrames[i]);
+                SetSprite(frame);
                 yield return new WaitForSeconds(frameTime);
             }
         }
         else
         {
-            // fallback: just keep lit sprite briefly
-            yield return new WaitForSeconds(0.2f);
+            yield return new WaitForSeconds(0.25f);
         }
+
+        if (autoDamage)
+            DoDamage();
+
+        // Short delay before destruction (let SFX/VFX finish)
+        Destroy(gameObject, 0.1f);
     }
 
     void DoDamage()
     {
-        // If you’re using UI + 2D physics, this still works if the bomb sits at a world position.
-        // Adjust as needed for your project.
         Vector3 worldPos = transform.position;
         var hits = Physics2D.OverlapCircleAll(worldPos, damageRadius);
         foreach (var h in hits)
         {
-            // Call your obstacle/car destroy logic here.
             var obstacle = h.GetComponent<ObstaclesControllerScript>();
             if (obstacle) obstacle.StartToDestroy(Color.red);
         }
@@ -109,6 +127,6 @@ public class BombExplosionAnim : MonoBehaviour
     void SetSprite(Sprite s)
     {
         if (uiImg) uiImg.sprite = s;
-        if (sr)    sr.sprite = s;
+        if (sr) sr.sprite = s;
     }
 }
