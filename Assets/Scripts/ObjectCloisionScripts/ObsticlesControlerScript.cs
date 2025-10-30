@@ -18,7 +18,7 @@ public class ObstaclesControllerScript : MonoBehaviour
     public float explosionRadiusPx = 220f;
 
     [Header("Bounds")]
-    public ScreenBoundariesScript screenBoundriesScript;
+    public ScreenBoundriesScript screenBoundriesScript;
     public float worldEdgeMargin = 0.25f;
 
     // cached
@@ -49,7 +49,7 @@ public class ObstaclesControllerScript : MonoBehaviour
 
         objectScript = Object.FindFirstObjectByType<ObjectScript>(FindObjectsInactive.Exclude);
         if (!screenBoundriesScript)
-            screenBoundriesScript = Object.FindFirstObjectByType<ScreenBoundariesScript>(FindObjectsInactive.Exclude);
+            screenBoundriesScript = Object.FindFirstObjectByType<ScreenBoundriesScript>(FindObjectsInactive.Exclude);
 
         rootCanvas = GetComponentInParent<Canvas>();
         if (rootCanvas) uiCam = rootCanvas.renderMode == RenderMode.ScreenSpaceCamera ? rootCanvas.worldCamera : null;

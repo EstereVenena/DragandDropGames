@@ -1,92 +1,140 @@
 using UnityEngine;
 
-public class ScreenBoundariesScript : MonoBehaviour
+[ExecuteAlways]
+public class ScreenBoundriesScript : MonoBehaviour
 {
-    [Header("Use a UI Panel (RectTransform) as the bounds (recommended)")]
+    [Header("Optional UI Area Bounds (RectTransform)")]
     public RectTransform playArea;
 
-    [Header("Or use Camera screen with padding (when playArea is not assigned)")]
-    [Range(0f, 0.45f)] public float paddingPercent = 0.02f;
+    [Header("World Bounds (used when playArea is null)")]
+    public Rect worldBounds = new Rect(-960, -540, 1920, 1080);
+    [Range(0f, 0.5f)] public float padding = 0.02f;
 
-    [Header("Computed (World Units)")]
-    public float minX, maxX, minY, maxY;
+    [Header("Camera Reference")]
+    public Camera targetCamera;
 
-    // Optional world bounds rectangle for reference
-    public Rect worldBounds = new Rect(-960, -560, 1920, 1080);
+    [Header("Calculated Bounds (Read-Only)")]
+    public float minCamX;
+    public float maxCamX;
+    public float minCamY;
+    public float maxCamY;
 
-    // Legacy fields for drag code compatibility
-    [HideInInspector] public Vector3 screenPoint;
-    [HideInInspector] public Vector3 offset;
+    private float lastOrthoSize;
+    private float lastAspect;
+    private Vector3 lastCamPos;
 
-    void Awake() => Recalculate();
-
-#if UNITY_EDITOR
-    void OnValidate()
+    void Awake()
     {
-        if (Application.isPlaying) return;
-        Recalculate();
+        if (targetCamera == null)
+            targetCamera = Camera.main;
+
+        RecalculateBounds();
     }
-#endif
 
-    public void Recalculate()
+    void Update()
     {
-        if (playArea)
+        if (targetCamera == null)
+            return;
+
+        bool changed = false;
+
+        if (targetCamera.orthographic)
         {
+            if (!Mathf.Approximately(targetCamera.orthographicSize, lastOrthoSize))
+                changed = true;
+        }
+
+        if (!Mathf.Approximately(targetCamera.aspect, lastAspect))
+            changed = true;
+
+        if (targetCamera.transform.position != lastCamPos)
+            changed = true;
+
+        if (changed)
+            RecalculateBounds();
+    }
+
+    public void RecalculateBounds()
+    {
+        if (targetCamera == null)
+            return;
+
+        if (playArea != null)
+        {
+            // Use UI RectTransform bounds
             var corners = new Vector3[4];
-            playArea.GetWorldCorners(corners); // 0 = Bottom Left, 2 = Top Right
+            playArea.GetWorldCorners(corners);
             Vector3 bl = corners[0];
             Vector3 tr = corners[2];
-            minX = bl.x; minY = bl.y; maxX = tr.x; maxY = tr.y;
+            worldBounds = new Rect(bl.x, bl.y, tr.x - bl.x, tr.y - bl.y);
         }
-        else
+
+        float wbMinX = worldBounds.xMin;
+        float wbMaxX = worldBounds.xMax;
+        float wbMinY = worldBounds.yMin;
+        float wbMaxY = worldBounds.yMax;
+
+        if (targetCamera.orthographic)
         {
-            Camera cam = Camera.main;
-            if (!cam)
+            float halfH = targetCamera.orthographicSize;
+            float halfW = halfH * targetCamera.aspect;
+
+            if (halfW * 2f >= (wbMaxX - wbMinX))
+                minCamX = maxCamX = (wbMinX + wbMaxX) * 0.5f;
+            else
             {
-                Debug.LogWarning("[ScreenBoundariesScript] No Camera.main found.");
-                return;
+                minCamX = wbMinX + halfW;
+                maxCamX = wbMaxX - halfW;
             }
 
-            float depth = Mathf.Abs(cam.transform.position.z);
-            Vector3 bl = cam.ScreenToWorldPoint(new Vector3(0f, 0f, depth));
-            Vector3 tr = cam.ScreenToWorldPoint(new Vector3(Screen.width, Screen.height, depth));
-
-            float padX = (tr.x - bl.x) * paddingPercent;
-            float padY = (tr.y - bl.y) * paddingPercent;
-
-            minX = bl.x + padX;
-            maxX = tr.x - padX;
-            minY = bl.y + padY;
-            maxY = tr.y - padY;
+            if (halfH * 2f >= (wbMaxY - wbMinY))
+                minCamY = maxCamY = (wbMinY + wbMaxY) * 0.5f;
+            else
+            {
+                minCamY = wbMinY + halfH;
+                maxCamY = wbMaxY - halfH;
+            }
         }
 
-        // Update worldBounds rect
-        worldBounds = new Rect(minX, minY, maxX - minX, maxY - minY);
+        lastOrthoSize = targetCamera.orthographicSize;
+        lastAspect = targetCamera.aspect;
+        lastCamPos = targetCamera.transform.position;
     }
 
+    public Vector2 GetClampedPosition(Vector3 curPosition)
+    {
+        float shrinkW = worldBounds.width * padding;
+        float shrinkH = worldBounds.height * padding;
+
+        float wbMinX = worldBounds.xMin + shrinkW;
+        float wbMaxX = worldBounds.xMax - shrinkW;
+        float wbMinY = worldBounds.yMin + shrinkH;
+        float wbMaxY = worldBounds.yMax - shrinkH;
+
+        float cx = Mathf.Clamp(curPosition.x, wbMinX, wbMaxX);
+        float cy = Mathf.Clamp(curPosition.y, wbMinY, wbMaxY);
+        return new Vector2(cx, cy);
+    }
+
+    public Vector3 GetClampedCameraPosition(Vector3 desiredCamCenter)
+    {
+        float cx = Mathf.Clamp(desiredCamCenter.x, minCamX, maxCamX);
+        float cy = Mathf.Clamp(desiredCamCenter.y, minCamY, maxCamY);
+        return new Vector3(cx, cy, desiredCamCenter.z);
+    }
+
+#if UNITY_EDITOR
     void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.green;
-        Vector3 center = new((minX + maxX) * 0.5f, (minY + maxY) * 0.5f, 0f);
-        Vector3 size = new(Mathf.Abs(maxX - minX), Mathf.Abs(maxY - minY), 0f);
+        Vector3 center = new((worldBounds.xMin + worldBounds.xMax) * 0.5f, (worldBounds.yMin + worldBounds.yMax) * 0.5f, 0f);
+        Vector3 size = new(Mathf.Abs(worldBounds.width), Mathf.Abs(worldBounds.height), 0f);
         Gizmos.DrawWireCube(center, size);
-    }
 
-    /// <summary>Clamp a world position to the current bounds, return as Vector2.</summary>
-    public Vector2 GetClampedPosition(Vector3 worldPos)
-    {
-        float x = Mathf.Clamp(worldPos.x, minX, maxX);
-        float y = Mathf.Clamp(worldPos.y, minY, maxY);
-        return new Vector2(x, y);
+        Gizmos.color = Color.cyan;
+        Vector3 camCenter = new((minCamX + maxCamX) * 0.5f, (minCamY + maxCamY) * 0.5f, 0f);
+        Vector3 camSize = new(Mathf.Abs(maxCamX - minCamX), Mathf.Abs(maxCamY - minCamY), 0f);
+        Gizmos.DrawWireCube(camCenter, camSize);
     }
-
-    /// <summary>Clamp a world position to the current bounds, preserving Z.</summary>
-    public Vector3 ClampWorldPosition(Vector3 worldPos)
-    {
-        return new Vector3(
-            Mathf.Clamp(worldPos.x, minX, maxX),
-            Mathf.Clamp(worldPos.y, minY, maxY),
-            worldPos.z
-        );
-    }
+#endif
 }
