@@ -971,8 +971,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 960, y: 540}
-  m_SizeDelta: {x: 1920, y: 1080}
+  m_AnchoredPosition: {x: 956.5779, y: 543.4222}
+  m_SizeDelta: {x: 1913.957, y: 1073.957}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &743212595
 MonoBehaviour:
@@ -1069,19 +1069,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playArea: {fileID: 743212594}
-  paddingPercent: 0.02
-  minX: -1243.8278
-  maxX: 890.49445
-  minY: -600.27814
-  maxY: 600.27814
   worldBounds:
     serializedVersion: 2
-    x: -1243.8278
-    y: -600.27814
-    width: 2134.3223
-    height: 1200.5563
-  screenPoint: {x: 0, y: 0, z: 0}
-  offset: {x: 0, y: 0, z: 0}
+    x: -1067.1611
+    y: -593.56055
+    width: 2127.6047
+    height: 1193.8386
+  padding: 0.02
+  targetCamera: {fileID: 1794564265}
+  minCamX: -124.9389
+  maxCamX: 118.221375
+  minCamY: -63.560547
+  maxCamY: 70.278076
 --- !u!114 &743212599
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3195,10 +3194,14 @@ MonoBehaviour:
   maxZoom: 300
   zoomStep: 10
   touchZoomSpeed: 0.5
+  doubleTapResetDuration: 0.25
   panSpeed: 6
   touchPanSpeed: 0.5
   worldMin: {x: -500, y: -500}
   worldMax: {x: 500, y: 500}
+  screenBoundries: {fileID: 0}
+  doubleTapMaxDelay: 0.4
+  doubleTapMaxDistance: 100
 --- !u!1 &1836420790
 GameObject:
   m_ObjectHideFlags: 0

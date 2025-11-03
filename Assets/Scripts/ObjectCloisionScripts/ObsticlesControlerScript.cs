@@ -52,7 +52,8 @@ public class ObstaclesControllerScript : MonoBehaviour
             screenBoundriesScript = Object.FindFirstObjectByType<ScreenBoundriesScript>(FindObjectsInactive.Exclude);
 
         rootCanvas = GetComponentInParent<Canvas>();
-        if (rootCanvas) uiCam = rootCanvas.renderMode == RenderMode.ScreenSpaceCamera ? rootCanvas.worldCamera : null;
+        if (rootCanvas)
+            uiCam = rootCanvas.renderMode == RenderMode.ScreenSpaceCamera ? rootCanvas.worldCamera : null;
     }
 
     void Start()
@@ -82,16 +83,16 @@ public class ObstaclesControllerScript : MonoBehaviour
             // Robust off-screen check (world space corners with canvas camera)
             if (!isFadingOut && screenBoundriesScript)
             {
-                // If you already compute minX/maxX as world coords, keep using them
-                float leftEdge  = screenBoundriesScript.minX - worldEdgeMargin;
-                float rightEdge = screenBoundriesScript.maxX + worldEdgeMargin;
+                // ✅ use minCamX/maxCamX instead of minX/maxX
+                float leftEdge = screenBoundriesScript.minCamX - worldEdgeMargin;
+                float rightEdge = screenBoundriesScript.maxCamX + worldEdgeMargin;
 
                 // World center X of this UI element
                 Vector3 worldCenter = rt.TransformPoint(rt.rect.center);
                 float xWorld = worldCenter.x;
 
                 if (speed > 0f && xWorld > rightEdge) BeginFadeOut();
-                if (speed < 0f && xWorld < leftEdge)  BeginFadeOut();
+                if (speed < 0f && xWorld < leftEdge) BeginFadeOut();
             }
         }
         else

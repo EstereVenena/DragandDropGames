@@ -20,7 +20,7 @@ public class CameraScript : MonoBehaviour
     [Header("World Boundaries")]
     public Vector2 worldMin = new Vector2(-500, -500);
     public Vector2 worldMax = new Vector2(500, 500);
-    public ScreenBoundariesScript screenBoundries; // Optional
+    public ScreenBoundriesScript screenBoundries; // Optional
 
     private Camera cam;
     private Vector3 lastPanPosition;
@@ -40,7 +40,7 @@ public class CameraScript : MonoBehaviour
         startZoom = cam.orthographicSize;
 
         if (screenBoundries == null)
-            screenBoundries = FindFirstObjectByType<ScreenBoundariesScript>();
+            screenBoundries = FindFirstObjectByType<ScreenBoundriesScript>();
     }
 
     void Start()
