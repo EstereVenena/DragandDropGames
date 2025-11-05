@@ -22,6 +22,9 @@ public class CameraScript : MonoBehaviour
     public Vector2 worldMax = new Vector2(500, 500);
     public ScreenBoundriesScript screenBoundries; // Optional
 
+    [Header("Debug / Editor")]
+    [SerializeField] private bool simulateMobileInEditor = false;
+
     private Camera cam;
     private Vector3 lastPanPosition;
     private int panFingerId = -1;
@@ -54,7 +57,17 @@ public class CameraScript : MonoBehaviour
 
     void Update()
     {
-#if UNITY_STANDALONE || UNITY_EDITOR
+#if UNITY_EDITOR
+        if (simulateMobileInEditor)
+        {
+            HandleTouchInput();
+        }
+        else
+        {
+            HandleMousePan();
+            HandleMouseZoom();
+        }
+#elif UNITY_STANDALONE
         HandleMousePan();
         HandleMouseZoom();
 #elif UNITY_ANDROID || UNITY_IOS
@@ -114,7 +127,7 @@ public class CameraScript : MonoBehaviour
             else if (t.phase == TouchPhase.Moved && isTouchPanning && t.fingerId == panFingerId)
             {
                 Vector2 delta = t.position - (Vector2)lastPanPosition;
-                transform.Translate(ScreenDeltaToWorldDelta(delta) * touchPanSpeed, Space.World);
+                transform.Translate(ScreenDeltaToWorldDelta(delta) * touchPanSpeed * Time.deltaTime * 60f, Space.World);
                 lastPanPosition = t.position;
             }
             else if (t.phase == TouchPhase.Ended || t.phase == TouchPhase.Canceled)
@@ -139,9 +152,10 @@ public class CameraScript : MonoBehaviour
 
         float prevDist = (prevPos0 - prevPos1).magnitude;
         float currDist = (t0.position - t1.position).magnitude;
-        float delta = (currDist - prevDist) / Screen.dpi; // normalized for device DPI
 
-        cam.orthographicSize -= delta * touchZoomSpeed * 100f * Time.deltaTime;
+        // Adjusted for consistent zoom across devices
+        float delta = (currDist - prevDist) * 0.01f;
+        cam.orthographicSize -= delta * touchZoomSpeed;
         cam.orthographicSize = Mathf.Clamp(cam.orthographicSize, minZoom, maxZoom);
     }
 
