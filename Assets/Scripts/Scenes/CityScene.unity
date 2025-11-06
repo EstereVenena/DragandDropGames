@@ -728,9 +728,9 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 429748542}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 853, y: 557}
+  m_AnchorMin: {x: 0.48735285, y: 0.5}
+  m_AnchorMax: {x: 0.48735285, y: 0.5}
+  m_AnchoredPosition: {x: 879, y: 557}
   m_SizeDelta: {x: 72.094, y: 49.767}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &641428882
@@ -1071,16 +1071,16 @@ MonoBehaviour:
   playArea: {fileID: 743212594}
   worldBounds:
     serializedVersion: 2
-    x: -3209.0378
-    y: -1463.6957
-    width: 2325.8237
-    height: 1308.2758
+    x: -3120.9778
+    y: -1423.7914
+    width: 821.501
+    height: 462.0943
   padding: 0.02
   targetCamera: {fileID: 1794564265}
-  minCamX: -2090.149
-  maxCamX: -2002.103
-  minCamY: -933.6957
-  maxCamY: -685.4199
+  minCamX: -2710.2273
+  maxCamX: -2710.2273
+  minCamY: -1192.7443
+  maxCamY: -1192.7443
 --- !u!114 &743212599
 MonoBehaviour:
   m_ObjectHideFlags: 0
