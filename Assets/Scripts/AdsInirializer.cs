@@ -1,18 +1,38 @@
+
 using System;
 using UnityEngine;
 using UnityEngine.Advertisements;
 
-public class AdsInirializer : MonoBehaviour
+public class AdsInitializer : MonoBehaviour, IUnityAdsInitializationListener
 {
-    [Sterilizefield] string _adnroidGAmeId
-        [Sterilizefield] bool _testMode = true
-        private string _gameID
-        public event Action OnAdsInitilized
-}
+    [SerializeField] string _androidGameId;
+    [SerializeField] bool _testMode = true;
+    private string _gameId;
+    public event Action OnAdsInitialized;
+
+    private void Awake()
+    {
+        InitializeAds();
+    }
+
+    public void InitializeAds()
+    {
+#if UNITY_ANDROID || UNITY_EDITOR
+        _gameId = _androidGameId;
 #endif
 
-if(!Advertisement.isInitilized &&Advertisement.isSupported)
-    Advertisement.isInitialize()
+        if (!Advertisement.isInitialized && Advertisement.isSupported)
+            Advertisement.Initialize(_gameId, _testMode, this);
+    }
 
-        if ad maneger 
-        debug.Logwarning("Tried to liad an ad before unity ads where initilieds")
+    public void OnInitializationComplete()
+    {
+        Debug.Log("Unity ads initialization complete!");
+        OnAdsInitialized?.Invoke();
+    }
+
+    public void OnInitializationFailed(UnityAdsInitializationError error, string message)
+    {
+        Debug.LogWarning($"Unity ads initialization failed: {error.ToString()} - {message}");
+    }
+}
