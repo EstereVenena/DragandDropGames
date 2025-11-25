@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 3f4135ba87318734f9d7c09bed01500f
+guid: 692e6a43c64e3c348a3a203161789d93
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 4002716609882566820
-    second: towerOfHanoi_0
+      213: -4652340463791800282
+    second: Hanoi 1_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -165,13 +165,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: towerOfHanoi_0
+      name: Hanoi 1_0
       rect:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 1280
-        height: 600
+        width: 1536
+        height: 1024
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -180,8 +180,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 4a03b94ac818c8730800000000000000
-      internalID: 4002716609882566820
+      spriteID: 62083815ff09f6fb0800000000000000
+      internalID: -4652340463791800282
       vertices: []
       indices: 
       edges: []
