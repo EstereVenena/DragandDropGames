@@ -69,6 +69,7 @@ public class ObstaclesControllerScript : MonoBehaviour
         HandleInput();
     }
 
+    #region Movement & Bounds
     private void HandleMovement()
     {
         if (!rt) return;
@@ -84,7 +85,9 @@ public class ObstaclesControllerScript : MonoBehaviour
             pos.y = baseY + Mathf.Sin(wavePhase) * waveAmplitude;
         }
         else
+        {
             pos.y = baseY;
+        }
 
         rt.anchoredPosition = pos;
     }
@@ -100,13 +103,21 @@ public class ObstaclesControllerScript : MonoBehaviour
         if ((speed > 0f && worldX.x > rightEdge) || (speed < 0f && worldX.x < leftEdge))
             BeginFadeOut();
     }
+    #endregion
 
+    #region Input
     private void HandleInput()
     {
-        Vector2 inputPos;
-        if (!TryGetInputPosition(out inputPos)) return;
+        if (!rt) return;
 
-        bool hit = rt && RectTransformUtility.RectangleContainsScreenPoint(rt, inputPos, uiCam);
+        if (!TryGetInputPosition(out Vector2 inputPos))
+            return;
+
+        // JA kaut kas ir nogājis sviestā un koordinātes ir NaN/Inf – neko nedaram, lai nebūtu error.
+        if (!IsValidScreenPos(inputPos))
+            return;
+
+        bool hit = RectTransformUtility.RectangleContainsScreenPoint(rt, inputPos, uiCam);
 
         // Hover explode for Bomb
         if (CompareTag("Bomb") && !isExploding && hit)
@@ -126,22 +137,38 @@ public class ObstaclesControllerScript : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Nolasām ievades pozīciju – editorī/PC izmanto peli, uz touch ierīcēm – pirmo touch.
+    /// Ja nav nevienas ievades, atgriežam false.
+    /// </summary>
     bool TryGetInputPosition(out Vector2 position)
     {
-#if UNITY_EDITOR || UNITY_STANDALONE
-        position = Input.mousePosition;
-        return true;
-#elif UNITY_ANDROID
-        if (Input.touchCount > 0)
+        // Touch ir prioritāte uz ierīcēm, kur tas ir pieejams
+        if (Input.touchSupported && Input.touchCount > 0)
         {
             position = Input.GetTouch(0).position;
             return true;
         }
+
+        // Ja ir pele – ņemam tās pozīciju
+        if (Input.mousePresent)
+        {
+            position = Input.mousePosition;
+            return true;
+        }
+
         position = Vector2.zero;
         return false;
-#endif
     }
 
+    bool IsValidScreenPos(Vector2 p)
+    {
+        return !(float.IsNaN(p.x) || float.IsNaN(p.y) ||
+                 float.IsInfinity(p.x) || float.IsInfinity(p.y));
+    }
+    #endregion
+
+    #region Explosion / Destroy
     public void TriggerExplosion()
     {
         if (isExploding) return;
@@ -174,7 +201,7 @@ public class ObstaclesControllerScript : MonoBehaviour
                 o.StartToDestroy(Color.cyan);
         }
 
-        // Physics2D overlap for Android
+        // Physics2D overlap
         if (TryGetComponent<CircleCollider2D>(out var circle))
         {
             float radius = circle.radius * transform.lossyScale.x;
@@ -259,11 +286,13 @@ public class ObstaclesControllerScript : MonoBehaviour
         }
         Destroy(target);
     }
+
     IEnumerator RecoverColor(float seconds)
     {
         yield return new WaitForSeconds(seconds);
         if (image) image.color = originalColor;
     }
+
     IEnumerator Vibrate()
     {
 #if UNITY_ANDROID
@@ -282,4 +311,5 @@ public class ObstaclesControllerScript : MonoBehaviour
         }
         rt.anchoredPosition = orig;
     }
+    #endregion
 }

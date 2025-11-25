@@ -6,19 +6,15 @@ public class HanoiGameManager : MonoBehaviour
 {
     public static HanoiGameManager Instance;
 
-    [Header("Towers")]
     public HanoiTower towerA;
     public HanoiTower towerB;
     public HanoiTower towerC;
 
-    [Header("Disks")]
     public HanoiDisk[] disks;
 
-    [Header("UI")]
     public GameObject winPanel;
     public TMP_Text movesText;
 
-    [Header("Game Settings")]
     public int totalDisks = 3;
 
     private int moves = 0;
@@ -30,7 +26,6 @@ public class HanoiGameManager : MonoBehaviour
             Destroy(gameObject);
             return;
         }
-
         Instance = this;
     }
 
@@ -52,25 +47,25 @@ public class HanoiGameManager : MonoBehaviour
 
         int stackIndex = 0;
 
-        // Liekam visus diskus uz TowerA
         for (int i = disks.Length - 1; i >= 0; i--)
         {
-            HanoiDisk disk = disks[i];
-
-            disk.transform.SetParent(towerA.transform);
+            var disk = disks[i];
+            disk.transform.SetParent(towerA.transform, false);
 
             var rt = disk.GetComponent<RectTransform>();
             if (rt != null)
             {
-                rt.anchoredPosition = new Vector2(
-                    towerA.xOffset,
-                    towerA.yStep * stackIndex
-                );
+                float towerHeight = ((RectTransform)towerA.transform).rect.height;
+                float diskHeight = rt.rect.height;
+
+                float baseY = -towerHeight * 0.5f + diskHeight * 0.5f;
+                float y = baseY + towerA.yStep * stackIndex;
+
+                rt.anchoredPosition = new Vector2(towerA.xOffset, y);
             }
 
             towerA.disks.Push(disk);
             disk.currentTower = towerA;
-
             stackIndex++;
         }
     }
@@ -104,8 +99,6 @@ public class HanoiGameManager : MonoBehaviour
             winPanel.SetActive(false);
     }
 
-    // ===== BUTTON EVENTS =====
-
     public void RestartLevel()
     {
         var scene = SceneManager.GetActiveScene();
@@ -114,7 +107,7 @@ public class HanoiGameManager : MonoBehaviour
 
     public void BackToMenu()
     {
-        SceneManager.LoadScene("TitleScene"); /// <- Ieliec šeit savu titula scēnas nosaukumu!
+        SceneManager.LoadScene("TitleScene");
     }
 
     public void QuitGame()
