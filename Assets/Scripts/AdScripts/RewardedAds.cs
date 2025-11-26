@@ -7,7 +7,6 @@ public class RewardedAds : MonoBehaviour, IUnityAdsLoadListener, IUnityAdsShowLi
 {
     [Header("Ad Unit IDs")]
     [SerializeField] string _androidAdUnitId = "Rewarded_Android";
-    // Ja gribēsi iOS, pieliksi te arī iOS id
     string _adUnitId;
 
     [Header("UI")]
@@ -16,60 +15,60 @@ public class RewardedAds : MonoBehaviour, IUnityAdsLoadListener, IUnityAdsShowLi
 
     public static event System.Action OnRewardClaimed;
 
+    private bool _isLoaded = false;
+
     private void Awake()
     {
-        // Šobrīd tikai Android
         _adUnitId = _androidAdUnitId;
-
-        if (!_rewardedAdButton)
-            Debug.LogWarning("[RewardedAds] Button not assigned.");
 
         if (!obstaclesSpawner)
             obstaclesSpawner = FindFirstObjectByType<ObstaclesSpawnScript>();
 
-        // Ja poga jau ir pieseta Inspectorā – uzreiz piesienam click
+        // Ja inspektorā jau ielikts button refs – sasienam
         if (_rewardedAdButton)
-        {
             SetButton(_rewardedAdButton);
-        }
     }
 
     private void Start()
     {
-        // mēģinam ielādēt pirmo reklāmu startā
-        LoadAd();
+        // Pirmo load darīsim tikai, ja Ads jau inicializēts
+        if (Advertisement.isInitialized)
+            LoadAd();
+        else
+            Debug.Log("[RewardedAds] Waiting for AdsInitializer to finish...");
     }
 
-    // -------------------- Load --------------------
+    // ================== LOAD ==================
     public void LoadAd()
     {
         if (!Advertisement.isInitialized)
         {
-            Debug.LogWarning("[RewardedAds] Ads not initialized yet.");
+            Debug.LogWarning("[RewardedAds] Ads not initialized yet, cannot load.");
             return;
         }
 
-        Debug.Log("[RewardedAds] Loading ad...");
+        Debug.Log("[RewardedAds] Loading rewarded ad...");
+        _isLoaded = false;
         Advertisement.Load(_adUnitId, this);
     }
 
     public void OnUnityAdsAdLoaded(string placementId)
     {
-        if (!placementId.Equals(_adUnitId))
-            return;
+        if (!placementId.Equals(_adUnitId)) return;
 
-        Debug.Log("[RewardedAds] Ad loaded!");
+        Debug.Log("[RewardedAds] Ad loaded OK.");
+        _isLoaded = true;
 
         if (_rewardedAdButton)
+        {
             _rewardedAdButton.interactable = true;
-        else
-            Debug.LogWarning("[RewardedAds] Ad loaded but button is null.");
+            Debug.Log("[RewardedAds] Button enabled for click.");
+        }
     }
 
     public void OnUnityAdsFailedToLoad(string placementId, UnityAdsLoadError error, string message)
     {
         Debug.LogWarning($"[RewardedAds] Failed to load ({error}): {message}");
-        // pēc nelielas pauzes mēģinam vēlreiz
         StartCoroutine(WaitAndLoad(5f));
     }
 
@@ -79,15 +78,41 @@ public class RewardedAds : MonoBehaviour, IUnityAdsLoadListener, IUnityAdsShowLi
         LoadAd();
     }
 
-    // -------------------- Show --------------------
+    // ================== BUTTON BIND ==================
+    public void SetButton(Button button)
+    {
+        if (!button)
+        {
+            Debug.LogWarning("[RewardedAds] SetButton called with null Button.");
+            return;
+        }
+
+        button.onClick.RemoveAllListeners();
+        button.onClick.AddListener(ShowAd);
+
+        _rewardedAdButton = button;
+
+        // TESTA REŽĪMS: ļaujam klikšķināt pat ja nav loaded, lai redzētu logus
+        _rewardedAdButton.interactable = true;
+
+        Debug.Log("[RewardedAds] Button bound to ShowAd().");
+    }
+
+    // ================== SHOW ==================
     public void ShowAd()
     {
-        if (!_rewardedAdButton)
-            Debug.LogWarning("[RewardedAds] ShowAd called but button is null.");
+        Debug.Log("[RewardedAds] ShowAd() called.");
 
         if (!Advertisement.isInitialized)
         {
-            Debug.LogWarning("[RewardedAds] Tried to show ad but Ads not initialized.");
+            Debug.LogWarning("[RewardedAds] Cannot show – Ads not initialized.");
+            return;
+        }
+
+        if (!_isLoaded)
+        {
+            Debug.LogWarning("[RewardedAds] Ad not loaded yet, loading again.");
+            LoadAd();
             return;
         }
 
@@ -98,26 +123,7 @@ public class RewardedAds : MonoBehaviour, IUnityAdsLoadListener, IUnityAdsShowLi
         Advertisement.Show(_adUnitId, this);
     }
 
-    public void SetButton(Button button)
-    {
-        if (!button) return;
-
-        // Nodzēšam vecos listenerus, ja bija
-        button.onClick.RemoveAllListeners();
-        button.onClick.AddListener(ShowAd);
-
-        _rewardedAdButton = button;
-        _rewardedAdButton.interactable = false; // līdz brīdim, kad ad ielādēsies
-    }
-
-    // -------------------- Show callbacks --------------------
-    public void OnUnityAdsShowFailure(string placementId, UnityAdsShowError error, string message)
-    {
-        Debug.LogWarning($"[RewardedAds] Failed to show ({error}): {message}");
-        Time.timeScale = 1f; // drošībai atjaunojam, ja kas izgāzās
-        StartCoroutine(WaitAndLoad(5f));
-    }
-
+    // ================== SHOW CALLBACKS ==================
     public void OnUnityAdsShowStart(string placementId)
     {
         Debug.Log("[RewardedAds] Ad show started. Pausing game time.");
@@ -129,39 +135,41 @@ public class RewardedAds : MonoBehaviour, IUnityAdsLoadListener, IUnityAdsShowLi
         Debug.Log("[RewardedAds] Ad clicked.");
     }
 
+    public void OnUnityAdsShowFailure(string placementId, UnityAdsShowError error, string message)
+    {
+        Debug.LogWarning($"[RewardedAds] Failed to show ({error}): {message}");
+        Time.timeScale = 1f;
+        StartCoroutine(WaitAndLoad(5f));
+    }
+
     public void OnUnityAdsShowComplete(string placementId, UnityAdsShowCompletionState showCompletionState)
     {
         Debug.Log($"[RewardedAds] Ad completed with state: {showCompletionState}");
-
-        // Atjaunojam laiku vienalga, kā beidzās
         Time.timeScale = 1f;
 
-        // Reward dodam TIKAI, ja tiešām noskatīts līdz galam
         if (showCompletionState == UnityAdsShowCompletionState.COMPLETED)
         {
             Debug.Log("[RewardedAds] Reward granted.");
 
-            // Notify event listeners
             OnRewardClaimed?.Invoke();
 
-            // Notīram visus lidojošos objektus
             if (obstaclesSpawner)
-                obstaclesSpawner.ClearAllSpawned();
+                obstaclesSpawner.ClearAllSpawned(); // vai tava metode
             else
-                Debug.LogWarning("[RewardedAds] No ObstaclesSpawnScript assigned to clear obstacles.");
+                Debug.LogWarning("[RewardedAds] No ObstaclesSpawnScript assigned.");
 
             if (_rewardedAdButton)
                 _rewardedAdButton.interactable = false;
 
-            // Pēc laika ielādējam nākamo reklāmu
             StartCoroutine(WaitAndLoad(10f));
         }
         else
         {
-            Debug.Log("[RewardedAds] Ad not fully watched – no reward, just reload ad.");
-            StartCoroutine(WaitAndLoad(5f));
+            Debug.Log("[RewardedAds] Not fully watched, no reward.");
             if (_rewardedAdButton)
                 _rewardedAdButton.interactable = false;
+
+            StartCoroutine(WaitAndLoad(5f));
         }
     }
 }

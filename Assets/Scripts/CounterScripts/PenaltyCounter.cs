@@ -1,6 +1,3 @@
-// Assets/Scripts/UI/PenaltyCounterUI.cs
-// Manages the crossed-car penalty icons and fires OnMaxPenalties when limit is reached.
-
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
@@ -78,5 +75,28 @@ public class PenaltyCounterUI : MonoBehaviour
             _firedMax = true;
             OnMaxPenalties?.Invoke();
         }
+    }
+
+    // 🔽🔽🔽 JAUNĀ DAĻA – EXTRA LIFE LOĢIKA 🔽🔽🔽
+    public void RemovePenalties(int n = 1)
+    {
+        if (_count <= 0) return;
+
+        for (int i = 0; i < n && _count > 0; i++)
+        {
+            _count--;
+
+            int lastIdx = _icons.Count - 1;
+            if (lastIdx >= 0)
+            {
+                if (_icons[lastIdx])
+                    Destroy(_icons[lastIdx]);
+                _icons.RemoveAt(lastIdx);
+            }
+        }
+
+        // Ja vairs neesam maksimālajā sodu skaitā, ļaujam OnMaxPenalties izšaut atkal nākamreiz
+        if (_count < maxPenalties)
+            _firedMax = false;
     }
 }

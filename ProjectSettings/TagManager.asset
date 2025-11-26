@@ -18,6 +18,7 @@ TagManager:
   - CarE61
   - Bomb
   - PlayArea
+  - RewardedButton
   layers:
   - Default
   - TransparentFX

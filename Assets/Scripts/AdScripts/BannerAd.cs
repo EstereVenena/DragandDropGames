@@ -17,18 +17,20 @@ public class BannerAd : MonoBehaviour
         _adUnitId = _androidAdUnitId;
         Advertisement.Banner.SetPosition(_bannerPosition);
     }
+
+    // ===================== LOAD =====================
     public void LoadBanner()
     {
         if (!Advertisement.isInitialized)
         {
-            Debug.Log("Tried to load banner ad before Unity ads was initialized!");
+            Debug.Log("[BannerAd] Tried to load banner before Ads was initialized.");
             return;
         }
 
         Debug.Log("Loading Banner ad!");
         BannerLoadOptions options = new BannerLoadOptions
         {
-            loadCallback = OnBannerLoaded,
+            loadCallback  = OnBannerLoaded,
             errorCallback = OnBannerError
         };
 
@@ -38,54 +40,75 @@ public class BannerAd : MonoBehaviour
     void OnBannerLoaded()
     {
         Debug.Log("Banner ad loaded!");
-        _bannerButton.interactable = true;
+
+        // FIX: ja nav poga – nekritam ārā
+        if (_bannerButton != null)
+            _bannerButton.interactable = true;
     }
 
     void OnBannerError(string message)
     {
-        Debug.LogWarning("Banner Error: " + message);
-        LoadBanner();
+        Debug.LogWarning("[BannerAd] Error: " + message);
+        // pēc vajadzības var lēnām mēģināt pārlādēt
+        // LoadBanner();
     }
 
+    // ===================== BUTTON TOGGLE =====================
     public void ShowBannerAd()
     {
         if (isBannerVisible)
         {
             HideBannerAd();
-
         }
         else
         {
             BannerOptions options = new BannerOptions
             {
                 clickCallback = OnBannerClicked,
-                hideCallback = OnBannerHidden,
-                showCallback = OnBannerShown
+                hideCallback  = OnBannerHidden,
+                showCallback  = OnBannerShown
             };
 
             Advertisement.Banner.Show(_adUnitId, options);
         }
     }
 
+    // ===================== PERSISTENT BANNER (HANOI) =====================
+    public void ShowPersistent()
+    {
+        if (isBannerVisible)
+            return;
+
+        BannerOptions options = new BannerOptions
+        {
+            clickCallback = OnBannerClicked,
+            hideCallback  = OnBannerHidden,
+            showCallback  = OnBannerShown
+        };
+
+        Advertisement.Banner.Show(_adUnitId, options);
+    }
+
     public void HideBannerAd()
     {
         Advertisement.Banner.Hide();
+        isBannerVisible = false;
     }
 
     void OnBannerClicked()
     {
-        Debug.Log("User clicked on banner ad!");
+        Debug.Log("[BannerAd] Banner clicked.");
     }
 
     void OnBannerHidden()
     {
-        Debug.Log("Banner is hidden!");
+        Debug.Log("[BannerAd] Banner hidden.");
         isBannerVisible = false;
     }
 
     void OnBannerShown()
     {
-        Debug.Log("Banner ad is visible!");
+        Debug.Log("[BannerAd] Banner shown.");
         isBannerVisible = true;
     }
 

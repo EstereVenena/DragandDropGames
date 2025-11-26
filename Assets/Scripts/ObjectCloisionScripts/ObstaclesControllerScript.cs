@@ -21,6 +21,10 @@ public class ObstaclesControllerScript : MonoBehaviour
     public ScreenBoundriesScript screenBoundriesScript;
     public float worldEdgeMargin = 0.25f;
 
+    [Header("Penalty")]
+    [Tooltip("UI sodu skaitītājs (X X X). Ja nav piesaistīts, mēģināsim atrast automātiski.")]
+    public PenaltyCounterUI penaltyUI;
+
     // Cached references
     private ObjectScript objectScript;
     private CanvasGroup canvasGroup;
@@ -49,6 +53,10 @@ public class ObstaclesControllerScript : MonoBehaviour
         objectScript = Object.FindFirstObjectByType<ObjectScript>(FindObjectsInactive.Exclude);
         if (!screenBoundriesScript)
             screenBoundriesScript = Object.FindFirstObjectByType<ScreenBoundriesScript>(FindObjectsInactive.Exclude);
+
+        // Automātiski mēģinām atrast PenaltyCounterUI, ja nav piesaistīts Inspectorā
+        if (!penaltyUI)
+            penaltyUI = Object.FindFirstObjectByType<PenaltyCounterUI>(FindObjectsInactive.Exclude);
 
         Canvas rootCanvas = GetComponentInParent<Canvas>();
         if (rootCanvas)
@@ -113,7 +121,7 @@ public class ObstaclesControllerScript : MonoBehaviour
         if (!TryGetInputPosition(out Vector2 inputPos))
             return;
 
-        // JA kaut kas ir nogājis sviestā un koordinātes ir NaN/Inf – neko nedaram, lai nebūtu error.
+        // Ja kaut kas ir nogājis sviestā un koordinātes ir NaN/Inf – neko nedaram.
         if (!IsValidScreenPos(inputPos))
             return;
 
@@ -123,16 +131,23 @@ public class ObstaclesControllerScript : MonoBehaviour
         if (CompareTag("Bomb") && !isExploding && hit)
             TriggerExplosion();
 
-        // Drag hit
+        // Drag hit – kad uzvelkam mašīnu virs šķēršļa / bumbas
         if (ObjectScript.drag && hit && !isFadingOut)
         {
             if (ObjectScript.lastDragged != null)
             {
+                // Iznīcinām mašīnu ar animāciju
                 StartCoroutine(ShrinkAndDestroy(ObjectScript.lastDragged, 0.5f));
+
+                // 👉 ŠEIT pieskaitām sodu par iznīcināto mašīnu
+                if (penaltyUI)
+                    penaltyUI.AddPenalties(1);
+
                 ObjectScript.lastDragged = null;
                 ObjectScript.drag = false;
             }
 
+            // Un pēc tam iznīcinām pašu šķērsli (vai bumbu)
             StartToDestroy(CompareTag("Bomb") ? Color.red : Color.cyan);
         }
     }

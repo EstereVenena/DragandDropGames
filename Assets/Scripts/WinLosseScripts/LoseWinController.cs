@@ -14,7 +14,7 @@ public class LoseWinController : MonoBehaviour
 
     [Header("Texts")]
     [TextArea] public string loseMessage = "Too many mistakes!";
-    [TextArea] public string loseExtraInfo = "Tip: avoid dragging cars across bombs.";
+    [TextArea] public string loseExtraInfo = "Tip: avoid dragging cars across bombs and flying objects.";
     [TextArea] public string winMessage = "All cars placed!";
     [TextArea] public string winExtraInfo = "Great work, driver.";
 
@@ -30,15 +30,18 @@ public class LoseWinController : MonoBehaviour
         if (!progressCounter)
             progressCounter = FindFirstObjectByType<ProgressCounter>(FindObjectsInactive.Exclude);
 
-        if (!penaltyCounter) Debug.LogWarning("[LoseWinController] PenaltyCounterUI not found.");
-        if (!popup)          Debug.LogWarning("[LoseWinController] GameEndPopup not found.");
+        if (!penaltyCounter)  Debug.LogWarning("[LoseWinController] PenaltyCounterUI not found.");
+        if (!popup)           Debug.LogWarning("[LoseWinController] GameEndPopup not found.");
         if (!progressCounter) Debug.LogWarning("[LoseWinController] ProgressCounter not found.");
 
         // Reflect the private UnityEvent on ProgressCounter: "onAllMatched"
         if (progressCounter)
         {
-            var fi = typeof(ProgressCounter).GetField("onAllMatched",
-                    System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+            var fi = typeof(ProgressCounter).GetField(
+                "onAllMatched",
+                System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance
+            );
+
             if (fi != null)
             {
                 _onAllMatched = fi.GetValue(progressCounter) as UnityEvent;
@@ -52,25 +55,33 @@ public class LoseWinController : MonoBehaviour
 
     void OnEnable()
     {
-        if (penaltyCounter) penaltyCounter.OnMaxPenalties.AddListener(OnLose);
+        if (penaltyCounter)     penaltyCounter.OnMaxPenalties.AddListener(OnLose);
         if (_onAllMatched != null) _onAllMatched.AddListener(OnWin);
     }
 
     void OnDisable()
     {
-        if (penaltyCounter) penaltyCounter.OnMaxPenalties.RemoveListener(OnLose);
+        if (penaltyCounter)     penaltyCounter.OnMaxPenalties.RemoveListener(OnLose);
         if (_onAllMatched != null) _onAllMatched.RemoveListener(OnWin);
     }
 
     public void OnLose()
     {
         if (!popup) return;
+
+        // ⛔ Stop game time on lose
+        Time.timeScale = 0f;
+
         popup.Show(GameEndPopup.PopupType.Lose, loseMessage, loseExtraInfo);
     }
 
     public void OnWin()
     {
         if (!popup) return;
+
+        // ⛔ Stop game time on win
+        Time.timeScale = 0f;
+
         popup.Show(GameEndPopup.PopupType.Win, winMessage, winExtraInfo);
     }
 }

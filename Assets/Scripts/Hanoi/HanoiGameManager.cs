@@ -12,8 +12,10 @@ public class HanoiGameManager : MonoBehaviour
 
     public HanoiDisk[] disks;
 
+    [Header("UI")]
     public GameObject winPanel;
-    public TMP_Text movesText;
+    public TMP_Text movesText;     // dzīvais skaitītājs spēles laikā
+    public TMP_Text winInfoText;   // teksts uz win ekrāna
 
     public int totalDisks = 3;
 
@@ -91,6 +93,16 @@ public class HanoiGameManager : MonoBehaviour
     {
         if (winPanel != null)
             winPanel.SetActive(true);
+
+        // Aprēķinām teorētisko minimumu: 2^n - 1
+        int optimalMoves = (1 << totalDisks) - 1;
+
+        if (winInfoText != null)
+        {
+            winInfoText.text =
+                $"Tu pabeidzi torni {moves} gājienos.\n" +
+                $"Teorētiskais minimums ar {totalDisks} diskiem ir {optimalMoves} gājieni.";
+        }
     }
 
     public void HideWinPanel()
