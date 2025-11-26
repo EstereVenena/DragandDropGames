@@ -27,6 +27,16 @@ public class MapZoomController : MonoBehaviour
     public float tweenSeconds = 0.15f;
 
     [Header("Input")]
+        [Header("Follow (optional)")]
+    [Tooltip("UI elements (mašīna), kuram kartei jāsako.")]
+    public RectTransform followTarget;
+    [Tooltip("Vai sekot targetam.")]
+    public bool followEnabled = false;
+    [Tooltip("Offset no ekrāna centra (px UI telpā).")]
+    public Vector2 followOffset = Vector2.zero;
+    [Tooltip("Cik gludi sekot (0 = instant).")]
+    public float followSpeed = 10f;
+
     [Tooltip("Atļaut zoom ar peles rullīti.")]
     public bool enableMouseWheel = true;
     [Tooltip("Atļaut pinch (2 pirksti) uz touch ierīcēm.")]

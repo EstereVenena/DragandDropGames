@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: 535589173933008987}
   - component: {fileID: 2933814856276463430}
   - component: {fileID: 2199576082509565366}
+  - component: {fileID: 674751381492379368}
   m_Layer: 5
   m_Name: CarE61
   m_TagString: CarE61
@@ -154,3 +155,15 @@ MonoBehaviour:
   alsoPlayOnPointerDown: 0
   volume: 1
   pitchJitter: 0.06
+--- !u!114 &674751381492379368
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1314920969259444007}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 34b73796b6f620142a80337517d42bf6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

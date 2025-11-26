@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: 912818202098289674}
   - component: {fileID: 1243717277516976561}
   - component: {fileID: 3150218323980884593}
+  - component: {fileID: 2005847705289663197}
   m_Layer: 5
   m_Name: GarbageTruck
   m_TagString: Garbage
@@ -154,3 +155,15 @@ MonoBehaviour:
   alsoPlayOnPointerDown: 0
   volume: 1
   pitchJitter: 0.06
+--- !u!114 &2005847705289663197
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 251953045663930475}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 34b73796b6f620142a80337517d42bf6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

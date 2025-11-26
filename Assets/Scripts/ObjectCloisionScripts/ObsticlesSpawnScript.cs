@@ -49,8 +49,12 @@ public class ObstaclesSpawnScript : MonoBehaviour
             var sb = FindFirstObjectByType<ScreenBoundriesScript>();
             if (sb && sb.playArea) playArea = sb.playArea;
         }
-        if (!playArea) playArea = transform.parent as RectTransform;
-        if (!spawnParentOverride && playArea) spawnParentOverride = playArea;
+
+        if (!playArea)
+            playArea = transform.parent as RectTransform;
+
+        if (!spawnParentOverride && playArea)
+            spawnParentOverride = playArea;
 
         if (!playArea)
             Debug.LogWarning("[Spawner] ⚠ No playArea assigned (spawning skipped).", this);
@@ -59,9 +63,17 @@ public class ObstaclesSpawnScript : MonoBehaviour
     void Start()
     {
         if (!playArea) return;
+
         InvokeRepeating(nameof(SpawnCloud), 0f, cloudSpawnInterval);
         InvokeRepeating(nameof(SpawnObstacle), 0f, obstacleSpawnInterval);
         InvokeRepeating(nameof(SpawnBomb), 5f, bombSpawnInterval);
+    }
+
+    void LateUpdate()
+    {
+        // uzturam listi tīru no iznīcinātiem objektiem
+        if (spawnedObjects.Count > 0)
+            spawnedObjects.RemoveAll(x => x == null);
     }
 
     // -------------------- Spawners --------------------
@@ -98,7 +110,8 @@ public class ObstaclesSpawnScript : MonoBehaviour
 
             WireBomb(itemRT);
 
-            if (autoFlipVisual) ApplyFlip(itemRT, moveRight: true);
+            if (autoFlipVisual)
+                ApplyFlip(itemRT, moveRight: true);
         }
         else
         {
@@ -116,7 +129,8 @@ public class ObstaclesSpawnScript : MonoBehaviour
 
             WireBomb(itemRT);
 
-            if (autoFlipVisual) ApplyFlip(itemRT, moveRight: !fromRight);
+            if (autoFlipVisual)
+                ApplyFlip(itemRT, moveRight: !fromRight);
         }
     }
 
@@ -147,7 +161,13 @@ public class ObstaclesSpawnScript : MonoBehaviour
             ApplyFlip(itemRT, moveRight: !fromRight);
     }
 
-    bool ChooseRightSide() => !spawnFromBothSides ? true : Random.value < rightSideChance;
+    bool ChooseRightSide()
+    {
+        if (!spawnFromBothSides)
+            return true; // vienmēr no labās
+
+        return Random.value < rightSideChance;
+    }
 
     RectTransform InstantiateUI(GameObject prefab, out RectTransform itemRT)
     {
@@ -204,11 +224,11 @@ public class ObstaclesSpawnScript : MonoBehaviour
         target.localScale = s;
     }
 
-    // -------------------- Public API --------------------
-    public void DestroyAllSpawnedObjects()
+    // Publiska utilīta, ja gribi notīrīt visus spawnotos objektus
+    public void ClearAllSpawned()
     {
-        foreach (var obj in spawnedObjects)
-            if (obj) Destroy(obj.gameObject);
+        foreach (var rt in spawnedObjects.Where(x => x != null))
+            Destroy(rt.gameObject);
 
         spawnedObjects.Clear();
     }

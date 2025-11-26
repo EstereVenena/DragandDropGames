@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: 215900963785922041}
   - component: {fileID: -2252701066727612835}
   - component: {fileID: 1970874542216619223}
+  - component: {fileID: -1711373938002498352}
   m_Layer: 5
   m_Name: Police
   m_TagString: Police
@@ -154,3 +155,15 @@ MonoBehaviour:
   alsoPlayOnPointerDown: 0
   volume: 1
   pitchJitter: 0.06
+--- !u!114 &-1711373938002498352
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4544650186657683121}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 34b73796b6f620142a80337517d42bf6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

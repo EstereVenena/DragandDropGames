@@ -126,15 +126,19 @@ public class DropPlaceScript : MonoBehaviour, IDropHandler
     }
 
     void SnapToAnchor(RectTransform carRT)
-    {
-        carRT.position = snapAnchor.position;
-        carRT.rotation = snapAnchor.rotation;
+{
+    carRT.position = snapAnchor.position;
+    carRT.rotation = snapAnchor.rotation;
 
-        float sx = Mathf.Sign(carRT.localScale.x == 0 ? 1f : carRT.localScale.x);
-        float sy = Mathf.Sign(carRT.localScale.y == 0 ? 1f : carRT.localScale.y);
-        Vector3 s = snapAnchor.localScale;
-        carRT.localScale = new Vector3(sx * Mathf.Abs(s.x), sy * Mathf.Abs(s.y), carRT.localScale.z);
-    }
+    // Tikai normalizējam zīmi (lai neapgriežas pārāk dīvaini),
+    // bet NEŅEMAM scale no snapAnchor.
+    Vector3 sc = carRT.localScale;
+    float sx = Mathf.Sign(sc.x == 0 ? 1f : sc.x);
+    float sy = Mathf.Sign(sc.y == 0 ? 1f : sc.y);
+    float m = Mathf.Max(Mathf.Abs(sc.x), Mathf.Abs(sc.y));
+    carRT.localScale = new Vector3(sx * m, sy * m, sc.z);
+}
+
 
     static bool WithinTol(float a, float b, float pct)
     {

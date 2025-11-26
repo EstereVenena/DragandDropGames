@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: 2963231378241958357}
   - component: {fileID: -910361006035706894}
   - component: {fileID: -1728260824276038903}
+  - component: {fileID: -5737126187085151094}
   m_Layer: 5
   m_Name: CarE46
   m_TagString: CarE46
@@ -154,3 +155,15 @@ MonoBehaviour:
   alsoPlayOnPointerDown: 0
   volume: 1
   pitchJitter: 0.06
+--- !u!114 &-5737126187085151094
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7520181236359180046}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 34b73796b6f620142a80337517d42bf6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

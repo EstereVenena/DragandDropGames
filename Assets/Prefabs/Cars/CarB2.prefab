@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: 3846215794588705357}
   - component: {fileID: 1237658922898172484}
   - component: {fileID: -6748072551689212559}
+  - component: {fileID: -4288466583660159418}
   m_Layer: 5
   m_Name: CarB2
   m_TagString: CarB2
@@ -154,3 +155,15 @@ MonoBehaviour:
   alsoPlayOnPointerDown: 0
   volume: 1
   pitchJitter: 0.06
+--- !u!114 &-4288466583660159418
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8836067751336463822}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 34b73796b6f620142a80337517d42bf6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

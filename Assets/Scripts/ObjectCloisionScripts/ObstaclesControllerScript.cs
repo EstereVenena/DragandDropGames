@@ -24,7 +24,7 @@ public class ObstaclesControllerScript : MonoBehaviour
     // Cached references
     private ObjectScript objectScript;
     private CanvasGroup canvasGroup;
-    private RectTransform rt;
+    internal RectTransform rt;
     private Image image;
     private Color originalColor;
     private Camera uiCam;
@@ -224,7 +224,6 @@ public class ObstaclesControllerScript : MonoBehaviour
     public void StartToDestroy(Color c)
     {
         if (isFadingOut) return;
-        isFadingOut = true;
 
         if (image)
         {
