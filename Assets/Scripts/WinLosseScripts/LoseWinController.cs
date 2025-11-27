@@ -13,10 +13,10 @@ public class LoseWinController : MonoBehaviour
     public ProgressCounter progressCounter;  // auto-found if null
 
     [Header("Texts")]
-    [TextArea] public string loseMessage = "Too many mistakes!";
-    [TextArea] public string loseExtraInfo = "Tip: avoid dragging cars across bombs and flying objects.";
-    [TextArea] public string winMessage = "All cars placed!";
-    [TextArea] public string winExtraInfo = "Great work, driver.";
+    [TextArea] public string loseMessage = "Pārāk daudz iznīcinātu mašīnu!";
+    [TextArea] public string loseExtraInfo = "Tip: Izvairies no lidmašīnām, mākoņem un bumbām";
+    [TextArea] public string winMessage = "Visas mašīnas novietotas!";
+    [TextArea] public string winExtraInfo = "Apsveicu!";
 
     // We’ll cache the private UnityEvent from ProgressCounter via reflection
     UnityEvent _onAllMatched;

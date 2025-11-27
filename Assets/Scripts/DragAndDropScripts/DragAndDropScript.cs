@@ -125,9 +125,9 @@ public class DragAndDropScript : MonoBehaviour, IBeginDragHandler, IDragHandler,
 
         // Save start transform for possible restore
         _startParent = _rt.parent;
-        _startPos    = _rt.position;
-        _startRot    = _rt.rotation;
-        _startScale  = _rt.localScale;
+        _startPos = _rt.position;
+        _startRot = _rt.rotation;
+        _startScale = _rt.localScale;
 
         // Let raycasts pass through this item so the slot receives OnDrop
         _cg.blocksRaycasts = false;
@@ -196,7 +196,7 @@ public class DragAndDropScript : MonoBehaviour, IBeginDragHandler, IDragHandler,
 
         // Resolve whatever we hit to the actual slot (parent with DropPlaceScript)
         var hitGO = e.pointerCurrentRaycast.gameObject;
-        var slot  = hitGO ? hitGO.GetComponentInParent<DropPlaceScript>() : null;
+        var slot = hitGO ? hitGO.GetComponentInParent<DropPlaceScript>() : null;
 
         bool accepted = false;
         bool explicitlyRejected = false;
@@ -211,8 +211,8 @@ public class DragAndDropScript : MonoBehaviour, IBeginDragHandler, IDragHandler,
         if (explicitlyRejected && restoreOnReject)
         {
             _rt.SetParent(_startParent, worldPositionStays: true);
-            _rt.position   = _startPos;
-            _rt.rotation   = _startRot;
+            _rt.position = _startPos;
+            _rt.rotation = _startRot;
             _rt.localScale = _startScale;
         }
 
@@ -269,9 +269,9 @@ public class DragAndDropScript : MonoBehaviour, IBeginDragHandler, IDragHandler,
         float dx = 0f, dy = 0f;
 
         if (Input.GetKey(KeyCode.RightArrow)) dx += scaleSpeedX * mult * Time.deltaTime;
-        if (Input.GetKey(KeyCode.LeftArrow))  dx -= scaleSpeedX * mult * Time.deltaTime;
-        if (Input.GetKey(KeyCode.UpArrow))    dy += scaleSpeedY * mult * Time.deltaTime;
-        if (Input.GetKey(KeyCode.DownArrow))  dy -= scaleSpeedY * mult * Time.deltaTime;
+        if (Input.GetKey(KeyCode.LeftArrow)) dx -= scaleSpeedX * mult * Time.deltaTime;
+        if (Input.GetKey(KeyCode.UpArrow)) dy += scaleSpeedY * mult * Time.deltaTime;
+        if (Input.GetKey(KeyCode.DownArrow)) dy -= scaleSpeedY * mult * Time.deltaTime;
 
         if (preserveAspectWhileScaling && (Mathf.Abs(dx) > 0.001f || Mathf.Abs(dy) > 0.001f))
         {
@@ -315,7 +315,7 @@ public class DragAndDropScript : MonoBehaviour, IBeginDragHandler, IDragHandler,
         if (Input.touchCount < 2) { _lastPinchDist = -1f; return; }
 
         Touch t1 = Input.GetTouch(0), t2 = Input.GetTouch(1);
-        float curDist  = Vector2.Distance(t1.position, t2.position);
+        float curDist = Vector2.Distance(t1.position, t2.position);
         float curAngle = Mathf.Atan2(t2.position.y - t1.position.y, t2.position.x - t1.position.x) * Mathf.Rad2Deg;
 
         if (_lastPinchDist > 0f)
@@ -471,8 +471,8 @@ public class DragAndDropScript : MonoBehaviour, IBeginDragHandler, IDragHandler,
         string key = saveKeyPrefix + name;
         if (!PlayerPrefs.HasKey(key + "_px")) return;
         _rt.anchoredPosition = new Vector2(PlayerPrefs.GetFloat(key + "_px"), PlayerPrefs.GetFloat(key + "_py"));
-        _rt.localRotation    = Quaternion.Euler(0, 0, PlayerPrefs.GetFloat(key + "_rz"));
-        _rt.localScale       = new Vector3(PlayerPrefs.GetFloat(key + "_sx"), PlayerPrefs.GetFloat(key + "_sy"), 1);
+        _rt.localRotation = Quaternion.Euler(0, 0, PlayerPrefs.GetFloat(key + "_rz"));
+        _rt.localScale = new Vector3(PlayerPrefs.GetFloat(key + "_sx"), PlayerPrefs.GetFloat(key + "_sy"), 1);
     }
 
     // ---------------------------- Safe finders ----------------------------
