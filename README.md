@@ -1,65 +1,91 @@
-# 🚗 DragAndDropGames
+# 🎮 Unity 2D Games Collection
 
-*2D Unity Drag & Drop Car Game for Children (Age 6+)*
+*2D Unity spēļu kolekcija bērniem (6+)*
 
 ---
 
 ## 📘 Project Overview
 
-**DragAndDropGames** is a simple and interactive 2D game built with **Unity** and **C#**.
-The main goal is to create a fun learning experience where players can **drag and drop cars** to the correct positions on the map while interacting with animated objects and obstacles.
+Šī kolekcija ietver divas izglītojošas un interaktīvas Unity spēles:  
 
-This project demonstrates basic Unity concepts such as **object interaction**, **event handling**, **scene management**, and **simple animations** — all designed as part of a **school assignment**.
+1. **Drag & Drop Car Game** – bērni velk un novieto automašīnas pareizajās vietās kartē, izvairoties no šķēršļiem.  
+2. **Hanoi Tower Game** – klasiskā Hanoja torņa spēle, kas palīdz attīstīt loģisko domāšanu, pārvietojot diskus starp stabiņiem, ievērojot noteikumus.
 
----
-
-## 🧩 Features
-
-* 🖱️ **Drag & Drop System** – Smooth and intuitive car movement using mouse or touch.
-* 🔄 **Transformation Script** – Handles scaling, rotation, and movement adjustments.
-* 📌 **Object Fixation** – Cars snap into the correct position when placed accurately.
-* 🎥 **Camera Controller** – Zoom in/out and movement restriction.
-* 🔊 **Sound System** – Background music and sound effects for interaction.
-* ☁️ **Animated Obstacles** – Flying obstacles with destroy effects.
-* 🎬 **Animated Main Menu** – Includes buttons, sounds, and animated elements.
-* ⏱️ **Game Timer** – Displays playtime in HH:MM:SS format.
-* 🌤️ **Animated Background Objects** – Clouds, animals, people, and vehicles for a lively scene.
+Šis projekts demonstrē Unity pamatus: **objektu manipulāciju, notikumu apstrādi, animācijas, scēnu pārvaldību un vienkāršu spēļu loģiku**.  
 
 ---
 
-## 🏁 Planned Features
+## 🚗 Drag & Drop Car Game
 
-* 🏆 Winning logic and scoring system
+### 🧩 Features
+
+- 🖱️ **Drag & Drop System** – Vilkšana un nomešana ar peli vai pieskārienu  
+- 🔄 **Transformation Script** – Skalēšana, rotācija un pārvietošanas korekcija  
+- 📌 **Object Fixation** – Automobiļi “pielīp” pareizajās vietās  
+- 🎥 **Camera Controller** – Tuvināšana un pārvietošanas ierobežojumi  
+- 🔊 **Sound System** – Fona mūzika un skaņas efekti  
+- ☁️ **Animated Obstacles & Background** – Lidojoši šķēršļi, mākoņi, dzīvnieki un cilvēki  
+- ⏱️ **Game Timer** – Laika skaitīšana HH:MM:SS formātā  
+
+### 🕹️ How to Play
+
+1. Sāc spēli no **Main Menu**  
+2. Klikšķini un velc automašīnas pa karti  
+3. Novieto katru automašīnu **pareizajā vietā**  
+4. Izvairies vai iznīcini lidojošos šķēršļus  
+5. Pabeidz izaicinājumu **ātrākajā iespējamajā laikā**  
+
+### 🧾 To-Do List
+
+- [x] Izveidot mapes un pievienot aktīvus  
+- [x] Pievienot automašīnas  
+- [x] Implementēt drag & drop sistēmu  
+- [x] Pievienot transformation un fixation skriptus  
+- [x] Pievienot kameru un ierobežojumus  
+- [x] Pievienot lidojošus šķēršļus  
+- [ ] Pievienot uzvaras loģiku  
+- [x] Izveidot animētu galveno izvēlni  
+- [x] Implementēt scēnu maiņu un iziešanu  
+- [x] Pievienot spēles taimeri  
+- [x] Pievienot animētus mākoņus, cilvēkus un transportu  
 
 ---
 
-## 🕹️ How to Play
+## 🏯 Hanoi Tower Game
 
-1. Start the game from the **Main Menu**.
-2. **Click and drag** cars to move them around the map.
-3. Drop each car into the **correct position**.
-4. **Avoid or destroy flying obstacles**.
-5. Complete the challenge **as quickly as possible!**
+### 🧩 Features
 
----
+- 🖱️ **Drag & Drop Disks** – Pārvieto diskus ar peli vai pieskārienu  
+- 🔄 **Disk Transformation Script** – Skalēšana, pozīcijas korekcija un animēta pārvietošana  
+- 📌 **Move Validation** – Mazākos diskus var likt tikai uz lielākiem  
+- 🎥 **Camera Controller** – Skata pielāgošana, lai redzami visi stabiņi  
+- 🔊 **Sound System** – Fona mūzika un skaņas efekti  
+- ⏱️ **Move Counter & Timer** – Skaita gājienus un kopējo spēles laiku  
+- 🎬 **Animated Main Menu** – Animēta izvēlne ar skaņām  
 
-## 🧾 To-Do List
+### 🕹️ How to Play
 
-* [x] Create folders and add assets
-* [x] Add cars to the map
-* [x] Implement drag & drop
-* [x] Add transformation and fixation scripts
-* [x] Add camera zoom and movement limits
-* [x] Add flying obstacles with destroy effects
-* [ ] Add winning logic
-* [x] Create animated main menu
-* [x] Implement scene change and quit option
-* [x] Add game timer
-* [x] Add animated clouds, vehicles, and people
+1. Sāc spēli no **Main Menu**  
+2. Klikšķini un velc diskus starp stabiņiem  
+3. Atceries – **mazāks disks tikai uz lielāka diska**  
+4. Pabeidz torni, pārvietojot visus diskus uz galveno stabiņu  
+5. Mēģini to izdarīt **ar pēc iespējas mazāku gājienu skaitu**  
+
+### 🧾 To-Do List
+
+- [x] Izveidot mapes un pievienot aktīvus  
+- [x] Pievienot diskus un stabiņus  
+- [x] Implementēt drag & drop sistēmu  
+- [x] Pievienot pārvietošanas validāciju  
+- [x] Pievienot skaņas efektus un mūziku  
+- [x] Izveidot animētu izvēlni  
+- [ ] Pievienot uzvaras animāciju un punktu skaitīšanu  
+- [ ] Dažādi grūtības līmeņi  
+- [ ] Rekordu sistēma  
 
 ---
 
 ## 👨‍💻 Author
 
-**Created by:** Estere Venena
+**Created by:** Estere Venena  
 🎓 *School Project – Unity 2D Game Development*
