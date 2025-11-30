@@ -83,11 +83,10 @@ public class HanoiGameManager : MonoBehaviour
         if (movesText != null)
             movesText.text = $"Kustības: {moves}";
     }
-
-    public bool IsWin(HanoiTower tower)
-    {
-        return tower.disks.Count == totalDisks;
-    }
+public bool IsWin(HanoiTower tower)
+{
+    return tower == towerC && tower.disks.Count == totalDisks;
+}
 
     public void ShowWin()
     {

@@ -589,7 +589,7 @@ Canvas:
   m_GameObject: {fileID: 429748538}
   m_Enabled: 1
   serializedVersion: 3
-  m_RenderMode: 1
+  m_RenderMode: 0
   m_Camera: {fileID: 1794564265}
   m_PlaneDistance: 100
   m_PixelPerfect: 0
@@ -1249,16 +1249,16 @@ MonoBehaviour:
   playArea: {fileID: 743212594}
   worldBounds:
     serializedVersion: 2
-    x: -2535.8787
-    y: -1577.0032
-    width: 2237.7573
-    height: 1060.0063
+    x: 0.010328815
+    y: -0.0032665173
+    width: 2279.9795
+    height: 1080.0065
   padding: 0.02
   targetCamera: {fileID: 1794564265}
-  minCamX: -1417
-  maxCamX: -1417
-  minCamY: -1047.0032
-  maxCamY: -1046.9968
+  minCamX: 1118.8993
+  maxCamX: 1161.1008
+  minCamY: 529.9967
+  maxCamY: 550.0032
 --- !u!114 &743212599
 MonoBehaviour:
   m_ObjectHideFlags: 0

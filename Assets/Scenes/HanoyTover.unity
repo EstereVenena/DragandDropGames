@@ -3124,7 +3124,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2114971249}
-  - component: {fileID: 2114971250}
   m_Layer: 5
   m_Name: HanoiZoomRoot
   m_TagString: Untagged
@@ -3158,27 +3157,6 @@ RectTransform:
   m_AnchoredPosition: {x: 43.068, y: -22.231}
   m_SizeDelta: {x: 2006.1, y: 1035.5}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &2114971250
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2114971248}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0288ba8f0aa624649b57826aaf8a49f8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  target: {fileID: 2114971249}
-  zoomInButton: {fileID: 0}
-  zoomOutButton: {fileID: 0}
-  minScale: 1
-  maxScale: 1.6
-  step: 0.15
-  tweenSeconds: 0.15
-  enableMouseWheel: 1
-  wheelSensitivity: 0.5
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

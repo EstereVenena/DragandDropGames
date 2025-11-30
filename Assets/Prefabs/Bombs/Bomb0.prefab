@@ -129,6 +129,7 @@ MonoBehaviour:
   explosionRadiusPx: 400
   screenBoundriesScript: {fileID: 0}
   worldEdgeMargin: 0.25
+  penaltyUI: {fileID: 0}
 --- !u!114 &6375858123232157933
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -155,6 +156,7 @@ MonoBehaviour:
   playArea: {fileID: 0}
   requireVisibleInPlayArea: 1
   penaltyUI: {fileID: 0}
+  vibrateOnExplosion: 1
 --- !u!222 &3815830896732227878
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -199,4 +201,7 @@ MonoBehaviour:
   sfx: {fileID: 0}
   fuseSfx: {fileID: 8300000, guid: a5abd8148eba6214183d42a737819c3c, type: 3}
   explodeSfx: {fileID: 0}
+  explosionParticles: {fileID: 0}
+  vibrateOnExplosion: 1
   damageRadius: 220
+  autoDamage: 0

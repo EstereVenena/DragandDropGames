@@ -14,6 +14,20 @@
 Šis projekts demonstrē Unity pamatus: **objektu manipulāciju, notikumu apstrādi, animācijas, scēnu pārvaldību un vienkāršu spēļu loģiku**.  
 
 ---
+## 
+
+Below are a few screens from the Hanoi Tower scene:
+
+### Gameplay
+<img src="Docs/Hanoi_Gameplay_01.png" width="350"/>
+<img src="Docs/DragAndDrop_01.png" width="350"/>
+
+### Win Screen
+<img src="Docs/Hanoi_Win_01.png" width="350"/>
+
+
+
+---
 
 ## 🚗 Drag & Drop Car Game
 
