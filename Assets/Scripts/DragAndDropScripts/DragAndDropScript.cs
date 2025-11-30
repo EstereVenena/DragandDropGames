@@ -93,144 +93,155 @@ public class DragAndDropScript : MonoBehaviour, IBeginDragHandler, IDragHandler,
     }
 
     void Update()
+{
+    // Neko nedaram, ja pauze
+    if (GameEndPopup.IsGamePaused)
+        return;
+
+    if (_locked) return;
+
+    if (_isDragging)
     {
-        if (_locked) return;
-        if (_isDragging)
-        {
-            HandleKeyboardRotate();
-            HandleKeyboardScale();
-            HandleKeyboardMirrorAndReset();
-            HandleTouchControls();
-        }
+        HandleKeyboardRotate();
+        HandleKeyboardScale();
+        HandleKeyboardMirrorAndReset();
+        HandleTouchControls();
     }
+}
+
 
     // ----------------------------- Drag begin -----------------------------
     public void OnBeginDrag(PointerEventData e)
-    {
-        if (_locked) return;
+{
+    if (GameEndPopup.IsGamePaused) return;
+    if (_locked) return;
 
-        if (!RectTransformUtility.ScreenPointToLocalPointInRectangle(_dragSpace, e.position, _uiCam, out var p))
-            return;
+    if (!RectTransformUtility.ScreenPointToLocalPointInRectangle(_dragSpace, e.position, _uiCam, out var p))
+        return;
 
-        _offset = _rt.anchoredPosition - p;
-        _isDragging = true;
+    _offset = _rt.anchoredPosition - p;
+    _isDragging = true;
 
-        // Tell the world we're dragging (for bombs, etc.)
-        DragState.Begin(_rt);
+    // Tell the world we're dragging (for bombs, etc.)
+    DragState.Begin(_rt);
 
-        _origSibling = _rt.GetSiblingIndex();
-        _rt.SetAsLastSibling();
+    _origSibling = _rt.GetSiblingIndex();
+    _rt.SetAsLastSibling();
 
-        _lastValidAnchored = _rt.anchoredPosition;
+    _lastValidAnchored = _rt.anchoredPosition;
 
-        // Save start transform for possible restore
-        _startParent = _rt.parent;
-        _startPos = _rt.position;
-        _startRot = _rt.rotation;
-        _startScale = _rt.localScale;
+    // Save start transform for possible restore
+    _startParent = _rt.parent;
+    _startPos = _rt.position;
+    _startRot = _rt.rotation;
+    _startScale = _rt.localScale;
 
-        // Let raycasts pass through this item so the slot receives OnDrop
-        _cg.blocksRaycasts = false;
-        _img.raycastTarget = false;
+    // Let raycasts pass through this item so the slot receives OnDrop
+    _cg.blocksRaycasts = false;
+    _img.raycastTarget = false;
 
-        // Safety: any decorative children shouldn't block
-        DisableDecorativeRaycasts(gameObject);
+    // Safety: any decorative children shouldn't block
+    DisableDecorativeRaycasts(gameObject);
 
-        if (_ghost) _ghost.SetActive(true);
-    }
+    if (_ghost) _ghost.SetActive(true);
+}
 
     // ------------------------------ Drag move -----------------------------
     public void OnDrag(PointerEventData e)
+{
+    if (GameEndPopup.IsGamePaused) return;
+    if (_locked) return;
+
+    if (!RectTransformUtility.ScreenPointToLocalPointInRectangle(_dragSpace, e.position, _uiCam, out var p))
+        return;
+
+    Vector2 wanted = p + _offset;
+
+    // Clamp to playArea
+    if (playArea)
     {
-        if (_locked) return;
-
-        if (!RectTransformUtility.ScreenPointToLocalPointInRectangle(_dragSpace, e.position, _uiCam, out var p))
-            return;
-
-        Vector2 wanted = p + _offset;
-
-        // Clamp to playArea
-        if (playArea)
-        {
-            Vector3 world = _dragSpace.TransformPoint(new Vector3(wanted.x, wanted.y, 0f));
-            var r = playArea.rect;
-            Vector3 lp = playArea.InverseTransformPoint(world);
-            lp.x = Mathf.Clamp(lp.x, r.xMin, r.xMax);
-            lp.y = Mathf.Clamp(lp.y, r.yMin, r.yMax);
-            world = playArea.TransformPoint(lp);
-            wanted = _dragSpace.InverseTransformPoint(world);
-        }
-
-        _rt.anchoredPosition = wanted;
-
-        bool inForbidden = IsInsideAnyNoDropZone(_rt.anchoredPosition);
-        _img.color = inForbidden ? forbiddenColor : normalColor;
-
-        if (!inForbidden) _lastValidAnchored = _rt.anchoredPosition;
-
-        if (showGhostPreview) UpdateGhost();
+        Vector3 world = _dragSpace.TransformPoint(new Vector3(wanted.x, wanted.y, 0f));
+        var r = playArea.rect;
+        Vector3 lp = playArea.InverseTransformPoint(world);
+        lp.x = Mathf.Clamp(lp.x, r.xMin, r.xMax);
+        lp.y = Mathf.Clamp(lp.y, r.yMin, r.yMax);
+        world = playArea.TransformPoint(lp);
+        wanted = _dragSpace.InverseTransformPoint(world);
     }
+
+    _rt.anchoredPosition = wanted;
+
+    bool inForbidden = IsInsideAnyNoDropZone(_rt.anchoredPosition);
+    _img.color = inForbidden ? forbiddenColor : normalColor;
+
+    if (!inForbidden) _lastValidAnchored = _rt.anchoredPosition;
+
+    if (showGhostPreview) UpdateGhost();
+}
+
 
     // ------------------------------ Drag end ------------------------------
     public void OnEndDrag(PointerEventData e)
+{
+    if (GameEndPopup.IsGamePaused) return;
+    if (_locked) return;
+
+    // Drag finished
+    _isDragging = false;
+    DragState.End();
+
+    // Put our own raycasts back (AFTER we've resolved the drop)
+    _cg.blocksRaycasts = true;
+    _img.raycastTarget = true;
+
+    _img.color = normalColor;
+    if (_ghost) _ghost.SetActive(false);
+
+    // If we ended inside any no-drop zone, push out a bit
+    if (IsInsideAnyNoDropZone(_rt.anchoredPosition))
     {
-        if (_locked) return;
-
-        // Drag finished
-        _isDragging = false;
-        DragState.End();
-
-        // Put our own raycasts back (AFTER we've resolved the drop)
-        _cg.blocksRaycasts = true;
-        _img.raycastTarget = true;
-
-        _img.color = normalColor;
-        if (_ghost) _ghost.SetActive(false);
-
-        // If we ended inside any no-drop zone, push out a bit
-        if (IsInsideAnyNoDropZone(_rt.anchoredPosition))
-        {
-            Vector2 fixedPos = PushOutsideNoDropZones(_rt.anchoredPosition, forbiddenEdgePadding);
-            _rt.anchoredPosition = fixedPos;
-        }
-
-        // Resolve whatever we hit to the actual slot (parent with DropPlaceScript)
-        var hitGO = e.pointerCurrentRaycast.gameObject;
-        var slot = hitGO ? hitGO.GetComponentInParent<DropPlaceScript>() : null;
-
-        bool accepted = false;
-        bool explicitlyRejected = false;
-
-        if (slot)
-        {
-            accepted = slot.TryAccept(gameObject);
-            explicitlyRejected = !accepted; // a slot was targeted but it said "nope"
-        }
-
-        // Only snap back if a slot rejected AND the toggle is ON
-        if (explicitlyRejected && restoreOnReject)
-        {
-            _rt.SetParent(_startParent, worldPositionStays: true);
-            _rt.position = _startPos;
-            _rt.rotation = _startRot;
-            _rt.localScale = _startScale;
-        }
-
-        // Final clamp so nothing ends off-screen
-        if (playArea)
-        {
-            Vector3[] c = new Vector3[4];
-            playArea.GetWorldCorners(c);
-            Vector3 p = _rt.position;
-            p.x = Mathf.Clamp(p.x, c[0].x, c[2].x);
-            p.y = Mathf.Clamp(p.y, c[0].y, c[2].y);
-            _rt.position = p;
-        }
-
-        _lastValidAnchored = _rt.anchoredPosition;
-
-        if (saveTransformState) SaveTransformState();
+        Vector2 fixedPos = PushOutsideNoDropZones(_rt.anchoredPosition, forbiddenEdgePadding);
+        _rt.anchoredPosition = fixedPos;
     }
+
+    // Resolve whatever we hit to the actual slot (parent with DropPlaceScript)
+    var hitGO = e.pointerCurrentRaycast.gameObject;
+    var slot = hitGO ? hitGO.GetComponentInParent<DropPlaceScript>() : null;
+
+    bool accepted = false;
+    bool explicitlyRejected = false;
+
+    if (slot)
+    {
+        accepted = slot.TryAccept(gameObject);
+        explicitlyRejected = !accepted; // a slot was targeted but it said "nope"
+    }
+
+    // Only snap back if a slot rejected AND the toggle is ON
+    if (explicitlyRejected && restoreOnReject)
+    {
+        _rt.SetParent(_startParent, worldPositionStays: true);
+        _rt.position = _startPos;
+        _rt.rotation = _startRot;
+        _rt.localScale = _startScale;
+    }
+
+    // Final clamp so nothing ends off-screen
+    if (playArea)
+    {
+        Vector3[] c = new Vector3[4];
+        playArea.GetWorldCorners(c);
+        Vector3 p = _rt.position;
+        p.x = Mathf.Clamp(p.x, c[0].x, c[2].x);
+        p.y = Mathf.Clamp(p.y, c[0].y, c[2].y);
+        _rt.position = p;
+    }
+
+    _lastValidAnchored = _rt.anchoredPosition;
+
+    if (saveTransformState) SaveTransformState();
+}
+
 
     // --------------------------- Public: Lock -----------------------------
     /// <summary>Called by DropPlaceScript on correct placement.</summary>

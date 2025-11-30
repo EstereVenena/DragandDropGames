@@ -74,43 +74,53 @@ public class BombController : MonoBehaviour, IPointerClickHandler, IPointerDownH
     }
 
     void Update()
+{
+    // Ja spēle pause → bumba neko nedara
+    if (GameEndPopup.IsGamePaused)
+        return;
+
+    if (exploded) return;
+
+    t += Time.deltaTime * Mathf.PI * 2f * waveFrequency;
+
+    if (rt)
     {
-        if (exploded) return;
-
-        t += Time.deltaTime * Mathf.PI * 2f * waveFrequency;
-
-        if (rt)
-        {
-            var pos = rt.anchoredPosition;
-            pos.x += speed * Time.deltaTime;
-            pos.y = baseY + Mathf.Sin(t) * waveAmplitude;
-            rt.anchoredPosition = pos;
-        }
-        else
-        {
-            var pos = transform.position;
-            pos.x += speed * Time.deltaTime;
-            transform.position = pos;
-        }
-
-        // drag-overlap
-        if (explodeOnDragOverlap && DragState.IsDragging && OverlapsUI(rt, DragState.Current, uiCam))
-            Explode(ExplosionCause.DragOverlap);
+        var pos = rt.anchoredPosition;
+        pos.x += speed * Time.deltaTime;
+        pos.y = baseY + Mathf.Sin(t) * waveAmplitude;
+        rt.anchoredPosition = pos;
     }
+    else
+    {
+        var pos = transform.position;
+        pos.x += speed * Time.deltaTime;
+        transform.position = pos;
+    }
+
+    // drag-overlap
+    if (explodeOnDragOverlap && DragState.IsDragging && OverlapsUI(rt, DragState.Current, uiCam))
+        Explode(ExplosionCause.DragOverlap);
+}
+
 
     // ---------------- touch/click input ----------------
 
     public void OnPointerClick(PointerEventData eventData)
-    {
-        if (explodeOnClick && !exploded)
-            Explode(ExplosionCause.Click);
-    }
+{
+    if (GameEndPopup.IsGamePaused) return;
 
-    public void OnPointerDown(PointerEventData eventData)
-    {
-        if (explodeOnClick && !exploded)
-            Explode(ExplosionCause.Click);
-    }
+    if (explodeOnClick && !exploded)
+        Explode(ExplosionCause.Click);
+}
+
+public void OnPointerDown(PointerEventData eventData)
+{
+    if (GameEndPopup.IsGamePaused) return;
+
+    if (explodeOnClick && !exploded)
+        Explode(ExplosionCause.Click);
+}
+
 
     // ---------------- core explosion logic ----------------
 

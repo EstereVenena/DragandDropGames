@@ -14,7 +14,7 @@ public class LoseWinController : MonoBehaviour
 
     [Header("Texts")]
     [TextArea] public string loseMessage = "Pārāk daudz iznīcinātu mašīnu!";
-    [TextArea] public string loseExtraInfo = "Tip: Izvairies no lidmašīnām, mākoņem un bumbām";
+    [TextArea] public string loseExtraInfo = "Tip: Izvairies no lidmašīnām, mākoņiem un bumbām";
     [TextArea] public string winMessage = "Visas mašīnas novietotas!";
     [TextArea] public string winExtraInfo = "Apsveicu!";
 
@@ -55,13 +55,13 @@ public class LoseWinController : MonoBehaviour
 
     void OnEnable()
     {
-        if (penaltyCounter)     penaltyCounter.OnMaxPenalties.AddListener(OnLose);
+        if (penaltyCounter)        penaltyCounter.OnMaxPenalties.AddListener(OnLose);
         if (_onAllMatched != null) _onAllMatched.AddListener(OnWin);
     }
 
     void OnDisable()
     {
-        if (penaltyCounter)     penaltyCounter.OnMaxPenalties.RemoveListener(OnLose);
+        if (penaltyCounter)        penaltyCounter.OnMaxPenalties.RemoveListener(OnLose);
         if (_onAllMatched != null) _onAllMatched.RemoveListener(OnWin);
     }
 
@@ -69,19 +69,22 @@ public class LoseWinController : MonoBehaviour
     {
         if (!popup) return;
 
-        // ⛔ Stop game time on lose
-        Time.timeScale = 0f;
-
-        popup.Show(GameEndPopup.PopupType.Lose, loseMessage, loseExtraInfo);
+        // NEbakstām Time.timeScale te – to dara GameEndPopup
+        popup.Show(
+            GameEndPopup.PopupType.Lose,
+            loseMessage,
+            loseExtraInfo
+        );
     }
 
     public void OnWin()
     {
         if (!popup) return;
 
-        // ⛔ Stop game time on win
-        Time.timeScale = 0f;
-
-        popup.Show(GameEndPopup.PopupType.Win, winMessage, winExtraInfo);
+        popup.Show(
+            GameEndPopup.PopupType.Win,
+            winMessage,
+            winExtraInfo
+        );
     }
 }

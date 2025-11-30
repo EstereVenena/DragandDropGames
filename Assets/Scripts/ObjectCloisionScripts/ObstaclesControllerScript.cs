@@ -71,11 +71,15 @@ public class ObstaclesControllerScript : MonoBehaviour
     }
 
     void Update()
-    {
-        HandleMovement();
-        HandleBoundsCheck();
-        HandleInput();
-    }
+{
+    if (GameEndPopup.IsGamePaused)
+        return;
+
+    HandleMovement();
+    HandleBoundsCheck();
+    HandleInput();
+}
+
 
     #region Movement & Bounds
     private void HandleMovement()
@@ -100,17 +104,28 @@ public class ObstaclesControllerScript : MonoBehaviour
         rt.anchoredPosition = pos;
     }
 
-    private void HandleBoundsCheck()
+  private void HandleBoundsCheck()
+{
+    if (isFadingOut || rt == null) return;
+
+    // Izvēlamies kuru kameru lietot – UI kameru vai Main Camera
+    Camera cam = uiCam != null ? uiCam : Camera.main;
+    if (cam == null) return;
+
+    // Pārvēršam objekta centru viewport koordinātēs (0..1)
+    Vector3 worldCenter = rt.TransformPoint(rt.rect.center);
+    Vector3 vp = cam.WorldToViewportPoint(worldCenter);
+
+    // worldEdgeMargin tagad izmantojam kā “viewport marginu”
+    // piem., 0.1 nozīmē 10% ārpus ekrāna
+    float m = worldEdgeMargin;
+
+    if (vp.x < -m || vp.x > 1f + m || vp.y < -m || vp.y > 1f + m)
     {
-        if (isFadingOut || !screenBoundriesScript || !rt) return;
-
-        float leftEdge = screenBoundriesScript.minCamX - worldEdgeMargin;
-        float rightEdge = screenBoundriesScript.maxCamX + worldEdgeMargin;
-        Vector3 worldX = rt.TransformPoint(rt.rect.center);
-
-        if ((speed > 0f && worldX.x > rightEdge) || (speed < 0f && worldX.x < leftEdge))
-            BeginFadeOut();
+        BeginFadeOut();
     }
+}
+
     #endregion
 
     #region Input

@@ -13,6 +13,7 @@ public class RewardedAds : MonoBehaviour, IUnityAdsLoadListener, IUnityAdsShowLi
     [SerializeField] Button _rewardedAdButton;
     [SerializeField] ObstaclesSpawnScript obstaclesSpawner;
 
+    // Notifikācija citiem, ka atlīdzība piešķirta (reklāma noskatīta līdz galam)
     public static event System.Action OnRewardClaimed;
 
     private bool _isLoaded = false;
@@ -92,7 +93,7 @@ public class RewardedAds : MonoBehaviour, IUnityAdsLoadListener, IUnityAdsShowLi
 
         _rewardedAdButton = button;
 
-        // TESTA REŽĪMS: ļaujam klikšķināt pat ja nav loaded, lai redzētu logus
+        // Testa režīms: ļaujam klikšķināt pat ja nav loaded, lai redzētu logus
         _rewardedAdButton.interactable = true;
 
         Debug.Log("[RewardedAds] Button bound to ShowAd().");
@@ -126,8 +127,8 @@ public class RewardedAds : MonoBehaviour, IUnityAdsLoadListener, IUnityAdsShowLi
     // ================== SHOW CALLBACKS ==================
     public void OnUnityAdsShowStart(string placementId)
     {
-        Debug.Log("[RewardedAds] Ad show started. Pausing game time.");
-        Time.timeScale = 0f;
+        Debug.Log("[RewardedAds] Ad show started.");
+        // GameEndPopup pauzē spēli, šeit Time.timeScale neķeram
     }
 
     public void OnUnityAdsShowClick(string placementId)
@@ -138,14 +139,13 @@ public class RewardedAds : MonoBehaviour, IUnityAdsLoadListener, IUnityAdsShowLi
     public void OnUnityAdsShowFailure(string placementId, UnityAdsShowError error, string message)
     {
         Debug.LogWarning($"[RewardedAds] Failed to show ({error}): {message}");
-        Time.timeScale = 1f;
+        // Ads neparādījās – mēģinām no jauna pēc pauzes
         StartCoroutine(WaitAndLoad(5f));
     }
 
     public void OnUnityAdsShowComplete(string placementId, UnityAdsShowCompletionState showCompletionState)
     {
         Debug.Log($"[RewardedAds] Ad completed with state: {showCompletionState}");
-        Time.timeScale = 1f;
 
         if (showCompletionState == UnityAdsShowCompletionState.COMPLETED)
         {

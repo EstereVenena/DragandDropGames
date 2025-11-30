@@ -1603,10 +1603,11 @@ MonoBehaviour:
   retryButton: {fileID: 1240263746}
   menuButton: {fileID: 1006735362}
   nextButton: {fileID: 0}
+  continueButton: {fileID: 1032965015}
   fadeDuration: 0.25
   pauseOnShow: 1
   mainMenuScene: TitleScene
-  nextScene: WIP
+  nextScene: Hanoy Tover
   winTitle: YOU WIN!
   loseTitle: GAME OVER
   sfxSource: {fileID: 0}
@@ -1616,6 +1617,9 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   OnHidden:
+    m_PersistentCalls:
+      m_Calls: []
+  OnRewardedContinue:
     m_PersistentCalls:
       m_Calls: []
 --- !u!1 &961781455

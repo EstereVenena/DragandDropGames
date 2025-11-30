@@ -1,4 +1,4 @@
-// Assets/Scripts/UI/GameEndPopup.cs
+// Assets/Scripts/WinLosseScripts/GameEndPopup.cs
 // Reusable Win/Lose popup with text OR sprite title, fade, pause, and scene buttons.
 
 using System.Collections;
@@ -12,6 +12,16 @@ using TMPro;
 public class GameEndPopup : MonoBehaviour
 {
     public enum PopupType { Win, Lose }
+
+    // Globāls flags, lai citi skripti var saprast, ka spēle ir pauzē
+    public static bool IsGamePaused { get; private set; }
+
+    // Cik reizes šajā spēles skrējienā izmantots continue (kopīgs visai spēlei)
+    private static int continuesUsed = 0;
+
+    [Header("Continue limits")]
+    [Tooltip("Cik reizes atļauts turpināt spēli pēc reklāmas vienā game run.")]
+    public int maxContinuesPerRun = 1;
 
     // ----------------------------- References -----------------------------
     [Header("References")]
@@ -52,9 +62,14 @@ public class GameEndPopup : MonoBehaviour
     public Button menuButton;      // go to Main Menu scene (if set)
     public Button nextButton;      // go to Next scene (if set)
 
+    [Tooltip("Optional: Continue (rewarded ad) button")]
+    public Button continueButton;
+
     // ----------------------------- Config -----------------------------
     [Header("Config")]
     [Min(0.01f)] public float fadeDuration = 0.25f;
+
+    [Tooltip("If true, Time.timeScale is set to 0f when popup shows, and restored to 1f when hidden.")]
     public bool pauseOnShow = true;
 
     [Tooltip("Scene name for Main Menu. Leave empty to hide Menu button.")]
@@ -65,6 +80,7 @@ public class GameEndPopup : MonoBehaviour
 
     [Tooltip("Fallback title (if not using sprites).")]
     public string winTitle = "YOU WIN!";
+
     [Tooltip("Fallback title (if not using sprites).")]
     public string loseTitle = "GAME OVER";
 
@@ -78,6 +94,10 @@ public class GameEndPopup : MonoBehaviour
     [Header("Events")]
     public UnityEvent OnShown;
     public UnityEvent OnHidden;
+
+    [Header("Rewarded Ad Events")]
+    [Tooltip("Called after a rewarded ad is successfully watched and reward granted.")]
+    public UnityEvent OnRewardedContinue;
 
     // ----------------------------- State -----------------------------
     bool isShowing;
@@ -99,13 +119,24 @@ public class GameEndPopup : MonoBehaviour
         canvasGroup.blocksRaycasts = false;
 
         // Button hooks
-        if (retryButton) retryButton.onClick.AddListener(OnRetry);
-        if (menuButton)  menuButton.onClick.AddListener(OnMenu);
-        if (nextButton)  nextButton.onClick.AddListener(OnNext);
+        if (retryButton)    retryButton.onClick.AddListener(OnRetry);
+        if (menuButton)     menuButton.onClick.AddListener(OnMenu);
+        if (nextButton)     nextButton.onClick.AddListener(OnNext);
+        if (continueButton) continueButton.onClick.AddListener(OnContinuePressed);
 
         // Initial button visibility by config
         if (menuButton) menuButton.gameObject.SetActive(!string.IsNullOrWhiteSpace(mainMenuScene));
         if (nextButton) nextButton.gameObject.SetActive(!string.IsNullOrWhiteSpace(nextScene));
+    }
+
+    void OnEnable()
+    {
+        RewardedAds.OnRewardClaimed += HandleRewardClaimed;
+    }
+
+    void OnDisable()
+    {
+        RewardedAds.OnRewardClaimed -= HandleRewardClaimed;
     }
 
     // ----------------------------- Public API -----------------------------
@@ -149,6 +180,13 @@ public class GameEndPopup : MonoBehaviour
         if (menuButton) menuButton.gameObject.SetActive(!string.IsNullOrWhiteSpace(mainMenuScene));
         if (nextButton) nextButton.gameObject.SetActive(!string.IsNullOrWhiteSpace(nextScene) && type == PopupType.Win);
 
+        // Continue poga – tikai Lose popup + ja nav pārsniegts limits
+        if (continueButton)
+        {
+            bool canContinue = (type == PopupType.Lose) && (continuesUsed < maxContinuesPerRun);
+            continueButton.gameObject.SetActive(canContinue);
+        }
+
         // SFX
         if (sfxSource)
         {
@@ -161,7 +199,11 @@ public class GameEndPopup : MonoBehaviour
         StopAllCoroutines();
         StartCoroutine(FadeCanvas(1f, null));
 
-        if (pauseOnShow) Time.timeScale = 0f;
+        if (pauseOnShow)
+        {
+            Time.timeScale = 0f;
+            IsGamePaused = true;
+        }
 
         OnShown?.Invoke();
     }
@@ -178,7 +220,99 @@ public class GameEndPopup : MonoBehaviour
             OnHidden?.Invoke();
         }));
 
-        if (pauseOnShow) Time.timeScale = 1f;
+        if (pauseOnShow)
+        {
+            Time.timeScale = 1f;
+            IsGamePaused = false;
+        }
+    }
+
+    // Ērts helperis – ja vajag no GameManager reseto continue skaitu jaunam skrējienam
+    public static void ResetContinues()
+    {
+        continuesUsed = 0;
+    }
+
+    // ----------------------------- Buttons -----------------------------
+
+    void OnRetry()
+{
+    // Jauns skrējiens → nullējam continue skaitu
+    continuesUsed = 0;
+
+    if (pauseOnShow)
+    {
+        Time.timeScale = 1f;
+        IsGamePaused = false;
+    }
+
+    var scene = SceneManager.GetActiveScene();
+    SceneManager.LoadScene(scene.buildIndex);
+}
+
+
+   void OnMenu()
+{
+    if (string.IsNullOrWhiteSpace(mainMenuScene)) return;
+
+    continuesUsed = 0;
+
+    if (pauseOnShow)
+    {
+        Time.timeScale = 1f;
+        IsGamePaused = false;
+    }
+
+    SceneManager.LoadScene(mainMenuScene);
+}
+
+
+    void OnNext()
+    {
+        if (string.IsNullOrWhiteSpace(nextScene)) return;
+
+        if (pauseOnShow)
+        {
+            Time.timeScale = 1f;
+            IsGamePaused = false;
+        }
+
+        SceneManager.LoadScene(nextScene);
+    }
+
+    /// <summary>
+    /// "Turpināt spēlēt" poga – startē rewarded reklāmu.
+    /// Spēle jau IR pauzē, tā nedrīkst atsākties šajā brīdī.
+    /// </summary>
+    public void OnContinuePressed()
+    {
+        if (AdManager.Instance != null && AdManager.Instance.rewardedAds != null)
+        {
+            AdManager.Instance.rewardedAds.ShowAd();
+        }
+        else
+        {
+            Debug.LogWarning("[GameEndPopup] AdManager / RewardedAds nav pieejams. Turpināšana bez reklāmas netiek atļauta.");
+        }
+    }
+
+    /// <summary>
+    /// Šo izsauc RewardedAds, ja reklāma noskatīta līdz galam (COMPLETED).
+    /// </summary>
+    void HandleRewardClaimed()
+    {
+        // Atzīmējam, ka continue izmantots
+        continuesUsed++;
+
+        // Atjaunojam spēli
+        if (pauseOnShow)
+        {
+            Time.timeScale = 1f;
+            IsGamePaused = false;
+        }
+
+        Hide();
+        OnRewardedContinue?.Invoke();
     }
 
     // ----------------------------- Internals -----------------------------
@@ -197,7 +331,10 @@ public class GameEndPopup : MonoBehaviour
 
         while (t < fadeDuration)
         {
-            t += (pauseOnShow ? Time.unscaledDeltaTime : Time.deltaTime);
+            // Ja popup pauzē spēli, lietojam ne-scaloto laiku
+            float dt = pauseOnShow ? Time.unscaledDeltaTime : Time.deltaTime;
+            t += dt;
+
             float a = Mathf.Lerp(start, targetAlpha, Mathf.Clamp01(t / fadeDuration));
             canvasGroup.alpha = a;
             yield return null;
@@ -205,36 +342,12 @@ public class GameEndPopup : MonoBehaviour
 
         canvasGroup.alpha = targetAlpha;
 
-        // Disable interaction if fully hidden
-        if (Mathf.Approximately(targetAlpha, 0f))
+        if (targetAlpha <= 0f)
         {
             canvasGroup.interactable = false;
             canvasGroup.blocksRaycasts = false;
         }
 
         onDone?.Invoke();
-    }
-
-    // ----------------------------- Button Handlers -----------------------------
-
-    public void OnRetry()
-    {
-        if (pauseOnShow) Time.timeScale = 1f;
-        var scene = SceneManager.GetActiveScene().name;
-        SceneManager.LoadScene(scene, LoadSceneMode.Single);
-    }
-
-    public void OnMenu()
-    {
-        if (string.IsNullOrWhiteSpace(mainMenuScene)) return;
-        if (pauseOnShow) Time.timeScale = 1f;
-        SceneManager.LoadScene(mainMenuScene, LoadSceneMode.Single);
-    }
-
-    public void OnNext()
-    {
-        if (string.IsNullOrWhiteSpace(nextScene)) return;
-        if (pauseOnShow) Time.timeScale = 1f;
-        SceneManager.LoadScene(nextScene, LoadSceneMode.Single);
     }
 }
